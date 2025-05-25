@@ -9,6 +9,9 @@
  **Required Hardware**
  - LilyGO T-A7608E-H board
  - DS18B20 temperature sensor
+ - 2N3906 and 2N3904 transistors
+ - 1K, 47K, 100, 4.7K resistors
+ - 3mF x 6.3V capacitor (more capacity is better)
  
  **Required Arduino Libraries**
  - esp32 by Espressif Systems (board) 3.2.0
