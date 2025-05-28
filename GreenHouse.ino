@@ -135,7 +135,7 @@ void ReadTemperature(TEMPERATURE_DATA& Data)
     // Request temperature from all connected sensros.
     Sensor.request();
     delay(SENSOR_READING_DELAY);
-    
+
     // Read temperature.
     Data.AvgTemperature = 0.0;
     uint8_t TotalSensors = 0;
@@ -176,7 +176,7 @@ bool IsModemActive()
             return true;
         delay(MODEM_TEST_DELAY);
     }
-    
+
     return false;
 }
 
@@ -205,7 +205,7 @@ bool InitModem()
     {
         digitalWrite(A7608H_PWRKEY_PIN, HIGH);
         delay(POWER_ON_PULSE);
-        
+
         digitalWrite(A7608H_PWRKEY_PIN, LOW);
         delay(POWER_ON_DELAY);
     }
@@ -225,17 +225,17 @@ bool InitSim()
     {
         case SIM_ERROR:
             return false;
-        
+
         case SIM_LOCKED:
             if (Modem.simUnlock("1234"))
                 return false;
             break;
-            
+
         case SIM_ANTITHEFT_LOCKED:
             return false;
     }
     delay(SIM_READ_DELAY);
-    
+
     return (Modem.getSimStatus() == SIM_READY);
 }
 
@@ -245,16 +245,16 @@ void UninitModem()
     Modem.sendAT("+CPOF");
     if (Modem.waitResponse(AT_TIMEOUT))
         return;
-    
+
     // If failed use power pins (hardware power off).
     // First make sure modem is alive. Otherwise we can turn it ON
     // instead.
     if (!IsModemActive())
         return;
-    
+
     digitalWrite(A7608H_PWRKEY_PIN, HIGH);
     delay(POWER_OFF_PULSE);
-    
+
     digitalWrite(A7608H_PWRKEY_PIN, LOW);
     delay(POWER_OFF_DELAY);
 }
@@ -284,7 +284,7 @@ bool ConnectToGprs()
     // Check GPRS connection.
     if (Modem.isGprsConnected())
         return true;
-    
+
     // Connect to GPRS.
     uint8_t Retry = 0;
     while (Retry < GPRS_CONNECT_RETRY)
@@ -326,11 +326,11 @@ bool ConnectToMqtt()
     // but to be sure.
     if (MqttClient.connected())
         return true;
-    
+
     // Set MQTT server parameters.
     MqttClient.setServer(MQTT_SERVER, MQTT_PORT);
     MqttClient.setSocketTimeout(MQTT_TIMEOUT);
-    
+
     // Try to connect to MQTT broker.
     uint8_t Retry = 0;
     while (Retry < MQTT_CONNECT_RETRY)
@@ -340,7 +340,7 @@ bool ConnectToMqtt()
         Retry++;
         delay(MQTT_CONNECT_DELAY);
     }
-    
+
     // Check MQTT connection state.
     return (MqttClient.state() == MQTT_CONNECTED);
 }
@@ -387,7 +387,7 @@ bool PublishTemperatureData(const TEMPERATURE_DATA& TemperatureData)
     // we must re-try in short period of time.
     if (!MqttClient.publish(MQTT_TOPIC_TEMPERATURE_AVG, Message))
         return false;
-    
+
     // The individual sensors data is not important so we do not check publishing result.
     for (uint8_t i = 0; i < SENSOR_ZONES_COUNT; i++)
     {
@@ -414,14 +414,14 @@ bool ProcessData()
     // Try to publish battery data.
     if (!PublishBatteryData(BatteryData))
         return false;
-    
+
     // Read temperature sensors data.
     TEMPERATURE_DATA TemperatureData = { 0 };
     ReadTemperature(TemperatureData);
     // Sent data to MQTT broker.
     if (!PublishTemperatureData(TemperatureData))
         return false;
-    
+
     // The averrage temperature is important. So if it was not read
     // correctly we must re-try in short period of time.
     return !isnan(TemperatureData.AvgTemperature);
@@ -463,7 +463,7 @@ void setup()
     // Disable brown-out
     uint32_t BownOutState = READ_PERI_REG(RTC_CNTL_BROWN_OUT_REG);
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
-    
+
     // Initialize onboard battery.
     InitBattery();
 
@@ -473,10 +473,10 @@ void setup()
     // Init DS18B20 power pin.
     pinMode(DS18B20_POWER_PIN, OUTPUT);
     digitalWrite(DS18B20_POWER_PIN, LOW);
-    
+
     // Initialize debug UART.
     DebugSerial.begin(DEBUG_UART_BAUD_RATE);
-    
+
     // Initialize modem hardware.
     InitModemHardware();
 
@@ -498,7 +498,7 @@ void setup()
             }
             // Disconnect from Internet.
             DisconnectFromGprs();
-        }   
+        }
         // Turn modem off.
         UninitModem();
     }
