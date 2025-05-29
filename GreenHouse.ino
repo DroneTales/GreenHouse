@@ -59,8 +59,7 @@ const char* const TAG_MQTT = "MQTT";
 /*                                 Data  types                                 */
 
 // Onboard battery data.
-struct BATTERY_DATA
-{
+struct BATTERY_DATA {
     // Read voltage.
     float   Voltage;
     // Adjusted voltage.
@@ -70,8 +69,7 @@ struct BATTERY_DATA
 };
 
 // Temperature data.
-struct TEMPERATURE_DATA
-{
+struct TEMPERATURE_DATA {
     float   AvgTemperature;
     float   Sensors[SENSOR_ZONES_COUNT];
 };
@@ -91,8 +89,7 @@ PubSubClient MqttClient(Client);
 /*******************************************************************************/
 /*                          Onboard battery  routines                          */
 
-void InitBattery()
-{
+void InitBattery() {
     // Initialize onboard battery pins.
     pinMode(BATT_18650_EN_PIN, OUTPUT);
     pinMode(BATT_18650_ADC_PIN, INPUT);
@@ -100,8 +97,7 @@ void InitBattery()
     digitalWrite(BATT_18650_EN_PIN, HIGH);
 }
 
-void ReadBatteryData(BATTERY_DATA& Data)
-{
+void ReadBatteryData(BATTERY_DATA& Data) {
     // Read battery voltage. Following by the board schematics there is 1:2 voltage
     // devider on the battery ADC pin.
     Data.Voltage = (float)analogReadMilliVolts(BATT_18650_ADC_PIN) / 1000.0 *
@@ -123,8 +119,7 @@ void ReadBatteryData(BATTERY_DATA& Data)
 /*******************************************************************************/
 /*                        Temperature sensors rountines                        */
 
-void ReadTemperature(TEMPERATURE_DATA& Data)
-{
+void ReadTemperature(TEMPERATURE_DATA& Data) {
     // Turns sensor on.
     digitalWrite(DS18B20_POWER_PIN, HIGH);
     delay(200);
@@ -139,12 +134,10 @@ void ReadTemperature(TEMPERATURE_DATA& Data)
     // Read temperature.
     Data.AvgTemperature = 0.0;
     uint8_t TotalSensors = 0;
-    for (uint8_t i = 0; i < SENSOR_ZONES_COUNT; i++)
-    {
+    for (uint8_t i = 0; i < SENSOR_ZONES_COUNT; i++) {
         if (Sensor.getTemp(SENSORS[i], Data.Sensors[i]))
             Data.Sensors[i] = NAN;
-        else
-        {
+        else {
             Data.AvgTemperature += Data.Sensors[i];
             TotalSensors++;
         }
@@ -164,14 +157,12 @@ void ReadTemperature(TEMPERATURE_DATA& Data)
 /*******************************************************************************/
 /*                               Modem rountines                               */
 
-bool IsModemActive()
-{
+bool IsModemActive() {
     // Clear modem stream.
     while (Modem.stream.available())
         Modem.stream.read();
 
-    for (uint8_t i = 0; i < 2; i++)
-    {
+    for (uint8_t i = 0; i < 2; i++) {
         if (Modem.testAT(AT_TIMEOUT))
             return true;
         delay(MODEM_TEST_DELAY);
@@ -180,8 +171,7 @@ bool IsModemActive()
     return false;
 }
 
-void InitModemHardware()
-{
+void InitModemHardware() {
     // Initialize modem control pins.
     pinMode(A7608H_DTR_PIN, OUTPUT);
     pinMode(A7608H_RESET_PIN, OUTPUT);
@@ -198,11 +188,9 @@ void InitModemHardware()
     delay(MODEM_WAKEUP_DELAY);
 }
 
-bool InitModem()
-{
+bool InitModem() {
     // Check modem state.
-    if (!IsModemActive())
-    {
+    if (!IsModemActive()) {
         digitalWrite(A7608H_PWRKEY_PIN, HIGH);
         delay(POWER_ON_PULSE);
 
@@ -218,11 +206,9 @@ bool InitModem()
     return ModemReady;
 }
 
-bool InitSim()
-{
+bool InitSim() {
     // Check SIM state. Enter PIN if needed.
-    switch (Modem.getSimStatus())
-    {
+    switch (Modem.getSimStatus()) {
         case SIM_ERROR:
             return false;
 
@@ -239,8 +225,7 @@ bool InitSim()
     return (Modem.getSimStatus() == SIM_READY);
 }
 
-void UninitModem()
-{
+void UninitModem() {
     // Try to turn modem off with AT command (software power off).
     Modem.sendAT("+CPOF");
     if (Modem.waitResponse(AT_TIMEOUT))
@@ -263,8 +248,7 @@ void UninitModem()
 /*******************************************************************************/
 /*                           Mobile network routines                           */
 
-bool ConnectToNetwork()
-{
+bool ConnectToNetwork() {
     // Wait for network connection.
     uint8_t Retry = 0;
     while (Retry++ < NETWORK_CHECK_RETRY && !Modem.isNetworkConnected())
@@ -272,8 +256,7 @@ bool ConnectToNetwork()
     return Modem.isNetworkConnected();
 }
 
-bool ConnectToGprs()
-{
+bool ConnectToGprs() {
     // Initialize SIM card.
     if (!InitSim())
         return false;
@@ -287,15 +270,12 @@ bool ConnectToGprs()
 
     // Connect to GPRS.
     uint8_t Retry = 0;
-    while (Retry < GPRS_CONNECT_RETRY)
-    {
-        if (Modem.gprsConnect(GPRS_APN, GPRS_USER_NAME, GPRS_PASSWORD))
-        {
+    while (Retry < GPRS_CONNECT_RETRY) {
+        if (Modem.gprsConnect(GPRS_APN, GPRS_USER_NAME, GPRS_PASSWORD)) {
             delay(GPRS_INIT_DELAY);
 
             uint8_t TestRetry = 0;
-            while (TestRetry < GPRS_TEST_RETRY)
-            {
+            while (TestRetry < GPRS_TEST_RETRY) {
                 if (Modem.isGprsConnected())
                     return true;
 
@@ -311,8 +291,7 @@ bool ConnectToGprs()
     return false;
 }
 
-void DisconnectFromGprs()
-{
+void DisconnectFromGprs() {
     Modem.gprsDisconnect();
 }
 
@@ -320,8 +299,7 @@ void DisconnectFromGprs()
 /*******************************************************************************/
 /*                                MQTT routines                                */
 
-bool ConnectToMqtt()
-{
+bool ConnectToMqtt() {
     // Check MQTT connection status. It should not be connected
     // but to be sure.
     if (MqttClient.connected())
@@ -333,10 +311,10 @@ bool ConnectToMqtt()
 
     // Try to connect to MQTT broker.
     uint8_t Retry = 0;
-    while (Retry < MQTT_CONNECT_RETRY)
-    {
+    while (Retry < MQTT_CONNECT_RETRY) {
         if (MqttClient.connect(MQTT_CLIENT_ID, MQTT_USER_NAME, MQTT_PASSWORD))
             break;
+        
         Retry++;
         delay(MQTT_CONNECT_DELAY);
     }
@@ -345,14 +323,12 @@ bool ConnectToMqtt()
     return (MqttClient.state() == MQTT_CONNECTED);
 }
 
-void DisconnectFromMqtt()
-{
+void DisconnectFromMqtt() {
     MqttClient.flush();
     MqttClient.disconnect();
 }
 
-bool PublishBatteryData(const BATTERY_DATA& BatteryData)
-{
+bool PublishBatteryData(const BATTERY_DATA& BatteryData) {
     char Message[30] = { 0 };
     sprintf(Message, "%u", BatteryData.Capacity);
     // The battery capacity is important data. If we are not able to
@@ -378,8 +354,7 @@ bool PublishBatteryData(const BATTERY_DATA& BatteryData)
     return true;
 }
 
-bool PublishTemperatureData(const TEMPERATURE_DATA& TemperatureData)
-{
+bool PublishTemperatureData(const TEMPERATURE_DATA& TemperatureData) {
     char Message[30] = { 0 };
     sprintf(Message, "%f",
         isnan(TemperatureData.AvgTemperature) ? SENSOR_INVALID_VALUE : TemperatureData.AvgTemperature);
@@ -389,8 +364,7 @@ bool PublishTemperatureData(const TEMPERATURE_DATA& TemperatureData)
         return false;
 
     // The individual sensors data is not important so we do not check publishing result.
-    for (uint8_t i = 0; i < SENSOR_ZONES_COUNT; i++)
-    {
+    for (uint8_t i = 0; i < SENSOR_ZONES_COUNT; i++) {
         char Topic[80] = { 0 };
         sprintf(Topic, MQTT_TOPIC_TEMPERATURE_SENSOR, i);
         memset(Message, 0, 30);
@@ -406,8 +380,7 @@ bool PublishTemperatureData(const TEMPERATURE_DATA& TemperatureData)
 /*******************************************************************************/
 /*                               Data processing                               */
 
-bool ProcessData()
-{
+bool ProcessData() {
     // Read onboard battery data.
     BATTERY_DATA BatteryData = { 0 };
     ReadBatteryData(BatteryData);
@@ -431,15 +404,13 @@ bool ProcessData()
 /*******************************************************************************/
 /*                              Arduino  routines                              */
 
-void DisableBluetoothAndWiFi()
-{
+void DisableBluetoothAndWiFi() {
     esp_bluedroid_disable();
     esp_bt_controller_disable();
     esp_wifi_stop();
 }
 
-void Hibernate(const bool Success)
-{
+void Hibernate(const bool Success) {
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON);
     esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
 
@@ -458,8 +429,7 @@ void Hibernate(const bool Success)
     esp_deep_sleep_start();
 }
 
-void setup()
-{
+void setup() {
     // Disable brown-out
     uint32_t BownOutState = READ_PERI_REG(RTC_CNTL_BROWN_OUT_REG);
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
@@ -483,14 +453,11 @@ void setup()
     // Data collecation and publishing result. Assume it is failed.
     bool Success = false;
     // Initialize modem.
-    if (InitModem())
-    {
+    if (InitModem()) {
         // Connect to Internet.
-        if (ConnectToGprs())
-        {
+        if (ConnectToGprs()) {
             // Connect to MQTT broker.
-            if (ConnectToMqtt())
-            {
+            if (ConnectToMqtt()) {
                 // Collect and send data.
                 Success = ProcessData();
                 // Disconnect from MQTT broker.
@@ -508,6 +475,5 @@ void setup()
     Hibernate(Success);
 }
 
-void loop()
-{
+void loop() {
 }
