@@ -16,30 +16,30 @@ from collections import OrderedDict
 
 ########################################################################################
 # MQTT Broker Settings
-MQTT_SERVER = "<your_server_address>"
-MQTT_PORT = <your_server_port>
-MQTT_USER_NAME = "<your_mqtt_user_name>"
-MQTT_PASSWORD = "<your_mqtt_user_password>"
-MQTT_CLIENT_ID = "greenhouse-web"
-MQTT_QOS = 1
+MQTT_SERVER     = "localhost"
+MQTT_PORT       = 1883
+MQTT_USER_NAME  = "" # Provide your MQTT server user name here.
+MQTT_PASSWORD   = "" # Provide your MQTT server password here.
+MQTT_CLIENT_ID  = "greenhouse-web"
+MQTT_QOS        = 1
 
 # MQTT topics
-SENSOR_ZONES_COUNT = 4
-MQTT_TOPIC_AVG_TEMPERATURE = "greenhouse/temperature"
-MQTT_TOPIC_TEMPERATURE_SENSORS = "greenhouse/sensors/%u"
+SENSOR_ZONES_COUNT                  = 4
+MQTT_TOPIC_AVG_TEMPERATURE          = "greenhouse/temperature"
+MQTT_TOPIC_TEMPERATURE_SENSORS      = "greenhouse/sensors/%u"
 
-MQTT_TOPIC_BATTERY_CAPACITY = "greenhouse/battery"
-MQTT_TOPIC_BATTERY_VOLTAGE = "greenhouse/voltage/voltage"
-MQTT_TOPIC_BATTERY_AJUSTED_VOLTAGE = "greenhouse/voltage/adjusted"
+MQTT_TOPIC_BATTERY_CAPACITY         = "greenhouse/battery"
+MQTT_TOPIC_BATTERY_VOLTAGE          = "greenhouse/voltage/voltage"
+MQTT_TOPIC_BATTERY_AJUSTED_VOLTAGE  = "greenhouse/voltage/adjusted"
 
 
 # Data types stored in database.
-DATA_TYPE_UNDEFINED = 0
-DATA_TYPE_BATTERY_CAPACITY = 1
-DATA_TYPE_BATTERY_VOLTAGE = 2
-DATA_TYPE_ADJUSTED_VOLATGE = 3
-DATA_TYPE_AVG_TEMPERATURE = 4
-DATA_TYPE_TEMPERATURE_SENSOR = 5
+DATA_TYPE_UNDEFINED             = 0
+DATA_TYPE_BATTERY_CAPACITY      = 1
+DATA_TYPE_BATTERY_VOLTAGE       = 2
+DATA_TYPE_ADJUSTED_VOLATGE      = 3
+DATA_TYPE_AVG_TEMPERATURE       = 4
+DATA_TYPE_TEMPERATURE_SENSOR    = 5
 ########################################################################################
 
 
@@ -154,10 +154,10 @@ def create_dashboard_app():
         
         # Button row for time selection
         html.Div([
-            html.Button("24 Hours", id = "btn-1d",  n_clicks = 0,   className = "time-btn"),
-            html.Button("7 Days",   id = "btn-7d",  n_clicks = 0,   className = "time-btn"),
-            html.Button("30 Days",  id = "btn-30d", n_clicks = 0,   className = "time-btn"),
-            html.Button("1 Year",   id = "btn-1y",  n_clicks = 0,   className = "time-btn"),
+            html.Button("24 Hours", id = "btn-1d",  n_clicks = 0, className = "time-btn"),
+            html.Button("7 Days",   id = "btn-7d",  n_clicks = 0, className = "time-btn"),
+            html.Button("30 Days",  id = "btn-30d", n_clicks = 0, className = "time-btn"),
+            html.Button("1 Year",   id = "btn-1y",  n_clicks = 0, className = "time-btn"),
         ], className="button-row"),
         
         # Graphs
@@ -166,8 +166,8 @@ def create_dashboard_app():
         
         # Auto-update component
         dcc.Interval(
-            id = "interval-component",
-            interval = 60 * 1000,  # Update every minute
+            id          = "interval-component",
+            interval    = 60 * 1000,  # Update every minute
             n_intervals = 0
         ),
         
@@ -266,32 +266,32 @@ def create_dashboard_app():
     def update_plots(time_range, _):
         df = get_sensor_data(time_range)
         time_label = {
-            "24h": "24 Hours",
-            "7d": "7 Days",
-            "30d": "30 Days",
-            "1y": "1 Year"
+            "24h":  "24 Hours",
+            "7d":   "7 Days",
+            "30d":  "30 Days",
+            "1y":   "1 Year"
         }.get(time_range, "24 Hours")
         
         # Create temperature plot
         temp_df = df[df["Sensor"].str.contains("Temperature")]
         temp_fig = px.line(
             temp_df, 
-            x="DATE_TIME", 
-            y="VALUE", 
-            color="Sensor",
-            title=f"Temperature Sensors - Last {time_label}",
-            labels={"VALUE": "Temperature (°C)", "DATE_TIME": "Time"}
+            x       = "DATE_TIME", 
+            y       = "VALUE", 
+            color   = "Sensor",
+            title   = f"Temperature Sensors - Last {time_label}",
+            labels  = {"VALUE": "Temperature (°C)", "DATE_TIME": "Time"}
         )
         
         # Create battery plot
         battery_df = df[df["Sensor"].str.contains("Battery|Voltage")]
         battery_fig = px.line(
             battery_df, 
-            x="DATE_TIME", 
-            y="VALUE", 
-            color="Sensor",
-            title=f"Battery Status - Last {time_label}",
-            labels={"VALUE": "Value", "DATE_TIME": "Time"}
+            x       = "DATE_TIME", 
+            y       = "VALUE", 
+            color   = "Sensor",
+            title   = f"Battery Status - Last {time_label}",
+            labels  = {"VALUE": "Value", "DATE_TIME": "Time"}
         )
         
         return temp_fig, battery_fig
