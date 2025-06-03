@@ -209,15 +209,15 @@ def create_dashboard_app():
         
         # Map data types to human-readable names
         type_mapping = {
-            DATA_TYPE_AVG_TEMPERATURE:  "Average Temperature",
-            DATA_TYPE_BATTERY_CAPACITY: "Battery Capacity",
-            DATA_TYPE_BATTERY_VOLTAGE:  "Battery Voltage",
-            DATA_TYPE_ADJUSTED_VOLATGE: "Adjusted Voltage",
+            DATA_TYPE_AVG_TEMPERATURE:  "Average",
+            DATA_TYPE_BATTERY_CAPACITY: "Capacity",
+            DATA_TYPE_BATTERY_VOLTAGE:  "Voltage",
+            DATA_TYPE_ADJUSTED_VOLATGE: "Adjusted",
         }
         
         # Add temperature sensors
         for i in range(SENSOR_ZONES_COUNT):
-            type_mapping[DATA_TYPE_TEMPERATURE_SENSOR + i] = f"Zone {i} Temperature"
+            type_mapping[DATA_TYPE_TEMPERATURE_SENSOR + i] = f"Zone {i}"
         
         df["Sensor"] = df["DATA_TYPE"].map(type_mapping)
         
@@ -273,7 +273,7 @@ def create_dashboard_app():
         }.get(time_range, "24 Hours")
         
         # Create temperature plot
-        temp_df = df[df["Sensor"].str.contains("Temperature")]
+        temp_df = df[df["Sensor"].str.contains("Average|Zone")]
         temp_fig = px.line(
             temp_df, 
             x       = "DATE_TIME", 
@@ -282,9 +282,19 @@ def create_dashboard_app():
             title   = f"Temperature Sensors - Last {time_label}",
             labels  = {"VALUE": "Temperature (°C)", "DATE_TIME": "Time"}
         )
+        temp_fig.update_layout(
+            legend = dict(
+                orientation = "h",      # Horizontal legend
+                yanchor     = "bottom", # Anchor to bottom
+                y           = 1.02,     # Position above plot
+                xanchor     = "right",  # Anchor to right
+                x           = 1         # Align to right
+            ),
+            margin = dict(t = 50) # Add top margin to prevent overlap
+        )
         
         # Create battery plot
-        battery_df = df[df["Sensor"].str.contains("Battery|Voltage")]
+        battery_df = df[df["Sensor"].str.contains("Capacity|Voltage|Adjusted")]
         battery_fig = px.line(
             battery_df, 
             x       = "DATE_TIME", 
@@ -292,6 +302,16 @@ def create_dashboard_app():
             color   = "Sensor",
             title   = f"Battery Status - Last {time_label}",
             labels  = {"VALUE": "Value", "DATE_TIME": "Time"}
+        )
+        battery_fig.update_layout(
+            legend = dict(
+                orientation = "h",      # Horizontal legend
+                yanchor     = "bottom", # Anchor to bottom
+                y           = 1.02,     # Position above plot
+                xanchor     = "right",  # Anchor to right
+                x           = 1         # Align to right
+            ),
+            margin = dict(t = 50)  # Add top margin to prevent overlap
         )
         
         return temp_fig, battery_fig
