@@ -6,7 +6,7 @@
 /*                         Temperature sensor settings                         */
 
 // Number of zones.
-#define SENSOR_ZONES_COUNT			4
+#define SENSOR_ZONES_COUNT			    4
 
 // Zone 1 sensor addresses.
 #define GREEN_ADDRESS               9666714504207294760
@@ -31,7 +31,7 @@ static uint64_t SENSORS[SENSOR_ZONES_COUNT] = {
 #define FULL_BATTERY_VOLTS          4.2
 // The voltage divider. By schematic it is 1:2 but actual
 // value may vary. In my case it is 1:1.95
-#define BATTERY_VOLTAGE_DIVIDER		1.95
+#define BATTERY_VOLTAGE_DIVIDER		  1.95
 // Low battery capacity.
 #define LOW_BATTERY_CAPACITY        10
 
@@ -39,20 +39,17 @@ static uint64_t SENSORS[SENSOR_ZONES_COUNT] = {
 /*******************************************************************************/
 /*                                GPRS settings                                */
 
-#ifndef GPRS_APN
-    #define GPRS_APN              	"<_GPRS_APN_>"
-    #define GPRS_USER_NAME          "<_GPRS_USER_NAME_>"
-    #define GPRS_PASSWORD           "<_GPRS_PASSWORD_>"
-    #define GPRS_SIM_PIN            "<_SIM_PIN_>"
-#endif
+#define GPRS_APN              	    "<_GPRS_APN_>"
+#define GPRS_USER_NAME              "<_GPRS_USER_NAME_>"
+#define GPRS_PASSWORD               "<_GPRS_PASSWORD_>"
+#define GPRS_SIM_PIN                "<_SIM_PIN_>"
 
 /*******************************************************************************/
 /*                            MQTT  server settings                            */
 
-#ifndef MQTT_SERVER
-    #define MQTT_SERVER             "<_MQTT_SERVER_ADDRESS_>"
-    #define MQTT_PORT               <_MQTT_SERVER_PORT_>
-    #define MQTT_USER_NAME          "<_MQTT_USER_NAME_>"
-    #define MQTT_PASSWORD           "<_MQTT_PASSWORD_>"
-    #define MQTT_CLIENT_ID          "GREEN_HOUSE"
-#endif
+#define MQTT_SERVER                 "<_MQTT_SERVER_ADDRESS_>"
+#define MQTT_PORT                   <_MQTT_SERVER_PORT_>
+#define MQTT_USER_NAME              "<_MQTT_USER_NAME_>"
+#define MQTT_PASSWORD               "<_MQTT_PASSWORD_>"
+#define MQTT_CLIENT_ID              "GREEN_HOUSE"
+
