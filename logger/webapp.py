@@ -1,146 +1,16 @@
-import paho.mqtt.client as mqtt
-import sqlite3
 import threading
 import dash
 import plotly.express as px
 import pandas as pd
 import sqlite3
 import threading
+import const
 
 from dash import dcc, html
 from dash.dependencies import Input, Output
 from datetime import datetime
 from datetime import datetime, timedelta
 from collections import OrderedDict
-
-
-########################################################################################
-# MQTT Broker Settings
-MQTT_SERVER     = "localhost"
-MQTT_PORT       = 1883
-MQTT_USER_NAME  = "" # Provide your MQTT server user name here.
-MQTT_PASSWORD   = "" # Provide your MQTT server password here.
-MQTT_CLIENT_ID  = "greenhouse-web"
-MQTT_QOS        = 1
-
-# MQTT topics
-SENSOR_ZONES_COUNT                  = 4
-MQTT_TOPIC_AVG_TEMPERATURE          = "greenhouse/temperature"
-MQTT_TOPIC_TEMPERATURE_SENSORS      = "greenhouse/sensors/%u"
-
-MQTT_TOPIC_BATTERY_CAPACITY         = "greenhouse/battery"
-MQTT_TOPIC_BATTERY_VOLTAGE          = "greenhouse/voltage/voltage"
-MQTT_TOPIC_BATTERY_AJUSTED_VOLTAGE  = "greenhouse/voltage/adjusted"
-
-
-# Data types stored in database.
-DATA_TYPE_UNDEFINED             = 0
-DATA_TYPE_BATTERY_CAPACITY      = 1
-DATA_TYPE_BATTERY_VOLTAGE       = 2
-DATA_TYPE_ADJUSTED_VOLATGE      = 3
-DATA_TYPE_AVG_TEMPERATURE       = 4
-DATA_TYPE_TEMPERATURE_SENSOR    = 5
-########################################################################################
-
-
-########################################################################################
-# Connects (or creates if not exists) to the database.
-def create_database():
-    connection = sqlite3.connect("./greenhouse.db")
-    cursor = connection.cursor()
-    cursor.execute("""
-        create table if not exists SENSORS (
-            DATE_TIME   integer not null default current_timestamp,
-            DATA_TYPE   integer not null,
-            VALUE       real
-        )""")
-    connection.commit()
-    connection.close()
-########################################################################################
-
-
-########################################################################################
-# Called when MQTT client connected to the broker.
-def on_connect(client, userdata, flags, reason_code, properties):
-    if reason_code == 0:
-        print("Connected successfully to MQTT broker")
-
-        # Subscribe to the topics
-        client.subscribe(MQTT_TOPIC_AVG_TEMPERATURE, MQTT_QOS)
-        for i in range(SENSOR_ZONES_COUNT):
-            client.subscribe(MQTT_TOPIC_TEMPERATURE_SENSORS % i, MQTT_QOS)
-
-        client.subscribe(MQTT_TOPIC_BATTERY_CAPACITY, MQTT_QOS)
-        client.subscribe(MQTT_TOPIC_BATTERY_VOLTAGE, MQTT_QOS)
-        client.subscribe(MQTT_TOPIC_BATTERY_AJUSTED_VOLTAGE, MQTT_QOS)
-    else:
-        print(f"Connection failed with code {reason_code}")
-
-
-########################################################################################
-# Callback when a message is received
-def on_message(client, userdata, msg):
-    # Trace data.
-    dateTime = datetime.now()
-    date = dateTime.date()
-    time = dateTime.time()
-    print(f"[{date}  {time}]: Received message on topic {msg.topic}: {msg.payload.decode()}")
-
-    # Convert topic name to the data type id.
-    dataType = DATA_TYPE_UNDEFINED
-    if (msg.topic == MQTT_TOPIC_AVG_TEMPERATURE) :
-        dataType = DATA_TYPE_AVG_TEMPERATURE
-    elif (msg.topic == MQTT_TOPIC_BATTERY_CAPACITY) :
-        dataType = DATA_TYPE_BATTERY_CAPACITY
-    elif (msg.topic == MQTT_TOPIC_BATTERY_VOLTAGE) :
-        dataType = DATA_TYPE_BATTERY_VOLTAGE
-    elif (msg.topic == MQTT_TOPIC_BATTERY_AJUSTED_VOLTAGE) :
-        dataType = DATA_TYPE_ADJUSTED_VOLATGE
-    else :
-        for i in range(SENSOR_ZONES_COUNT) :
-            topicName = MQTT_TOPIC_TEMPERATURE_SENSORS % i
-            if (msg.topic == topicName) :
-                dataType = DATA_TYPE_TEMPERATURE_SENSOR + i
-                break
-    
-    # Add new data to the database.
-    if (dataType != DATA_TYPE_UNDEFINED) :
-        connection = sqlite3.connect("./greenhouse.db")
-        cursor = connection.cursor()
-        sql = f"insert into SENSORS(DATA_TYPE, VALUE) values({dataType}, {msg.payload.decode()})"
-        cursor.execute(sql)
-        connection.commit()
-        connection.close()
-########################################################################################
-
-
-########################################################################################
-# The MQTT client thread
-def run_mqtt_client():
-    # Create MQTT client instance
-    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, MQTT_CLIENT_ID, True)
-    client.username_pw_set(MQTT_USER_NAME, MQTT_PASSWORD)
-
-    # Assign callback functions
-    client.on_connect = on_connect
-    client.on_message = on_message
-
-    try:
-        # Connect to the broker
-        client.connect(MQTT_SERVER, MQTT_PORT, 60)
-        print(f"Connecting to MQTT broker at {MQTT_SERVER}...")
-    
-        # Start the network loop
-        client.loop_forever()
-    
-    except KeyboardInterrupt:
-        print("Disconnecting from MQTT broker...")
-        client.disconnect()
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        client.disconnect()
-########################################################################################
 
 
 ########################################################################################
@@ -182,7 +52,7 @@ def create_dashboard_app():
     
     # Helper function to get data from database
     def get_sensor_data(time_range = "24h", start_date = None, end_date = None):
-        conn = sqlite3.connect("./greenhouse.db")
+        conn = sqlite3.connect(const.DATABASE_FILE_NAME)
         
         # Calculate time range
         if time_range == "24h":
@@ -209,15 +79,15 @@ def create_dashboard_app():
         
         # Map data types to human-readable names
         type_mapping = {
-            DATA_TYPE_AVG_TEMPERATURE:  "Average",
-            DATA_TYPE_BATTERY_CAPACITY: "Capacity",
-            DATA_TYPE_BATTERY_VOLTAGE:  "Voltage",
-            DATA_TYPE_ADJUSTED_VOLATGE: "Adjusted",
+            const.DATA_TYPE_AVG_TEMPERATURE:  "Average",
+            const.DATA_TYPE_BATTERY_CAPACITY: "Capacity",
+            const.DATA_TYPE_BATTERY_VOLTAGE:  "Voltage",
+            const.DATA_TYPE_ADJUSTED_VOLATGE: "Adjusted",
         }
         
         # Add temperature sensors
-        for i in range(SENSOR_ZONES_COUNT):
-            type_mapping[DATA_TYPE_TEMPERATURE_SENSOR + i] = f"Zone {i}"
+        for i in range(const.SENSOR_ZONES_COUNT):
+            type_mapping[const.DATA_TYPE_TEMPERATURE_SENSOR + i] = f"Zone {i}"
         
         df["Sensor"] = df["DATA_TYPE"].map(type_mapping)
         
@@ -317,33 +187,9 @@ def create_dashboard_app():
         return temp_fig, battery_fig
     
     return app
-
-
-########################################################################################
-# The dashboard server thread
-def run_dashboard():
-    app = create_dashboard_app()
-    app.run(host = "0.0.0.0", port = 8228, debug = False)
 ########################################################################################
 
 
 if __name__ == "__main__":
-    create_database()
-
-    # Start MQTT client in a thread
-    mqttThread = threading.Thread(target = run_mqtt_client, daemon = True)
-    mqttThread.start()
-
-    # Start dashboard in a thread
-    dashboardThread = threading.Thread(target = run_dashboard, daemon = True)
-    dashboardThread.start()
-
-    print("Both MQTT client and dashboard are running in background threads.")
-    print(f"Dashboard available at: http://localhost:8050")
-
-    # Keep main thread alive
-    try:
-        while True:
-            pass
-    except KeyboardInterrupt:
-        print("\nShutting down...")
+    app = create_dashboard_app()
+    app.run(host = "0.0.0.0", port = 8228, debug = False)
