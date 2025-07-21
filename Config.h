@@ -9,13 +9,13 @@
 #define SENSOR_ZONES_COUNT			    4
 
 // Zone 1 sensor addresses.
-#define GREEN_ADDRESS               9666714504207294760
+#define GREEN_ADDRESS               9666714504207294760ul
 // Zone 2 sensor addresses.
-#define YELLOW_ADDRESS              18437195502557880616
+#define YELLOW_ADDRESS              18437195502557880616ul
 // Zone 3 sensor addresses.
-#define BLACK_ADDRESS               290801794589212200
+#define BLACK_ADDRESS               290801794589212200ul
 // Zone 4 sensor addresses.
-#define RED_ADDRESS                 16791709353807948072
+#define RED_ADDRESS                 16791709353807948072ul
 
 static uint64_t SENSORS[SENSOR_ZONES_COUNT] = {
   GREEN_ADDRESS, YELLOW_ADDRESS, BLACK_ADDRESS, RED_ADDRESS
