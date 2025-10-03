@@ -105,10 +105,12 @@ void ReadBatteryData(BATTERY_DATA& Data) {
 
     // Adjust voltage.
     Data.AdjustedVoltage = Data.Voltage;
-    if (Data.AdjustedVoltage < EMPTY_BATTERY_VOLTS)
+    if (Data.AdjustedVoltage < EMPTY_BATTERY_VOLTS) {
         Data.AdjustedVoltage = EMPTY_BATTERY_VOLTS;
-    if (Data.AdjustedVoltage > FULL_BATTERY_VOLTS)
+    }
+    if (Data.AdjustedVoltage > FULL_BATTERY_VOLTS) {
         Data.AdjustedVoltage = FULL_BATTERY_VOLTS;
+    }
 
     // Calculate battery capacity
     Data.Capacity = (uint8_t)(100.0 * ((Data.AdjustedVoltage - EMPTY_BATTERY_VOLTS) /
@@ -135,9 +137,9 @@ void ReadTemperature(TEMPERATURE_DATA& Data) {
     Data.AvgTemperature = 0.0;
     uint8_t TotalSensors = 0;
     for (uint8_t i = 0; i < SENSOR_ZONES_COUNT; i++) {
-        if (Sensor.getTemp(SENSORS[i], Data.Sensors[i]))
+        if (Sensor.getTemp(SENSORS[i], Data.Sensors[i])) {
             Data.Sensors[i] = NAN;
-        else {
+        } else {
             Data.AvgTemperature += Data.Sensors[i];
             TotalSensors++;
         }
@@ -147,10 +149,11 @@ void ReadTemperature(TEMPERATURE_DATA& Data) {
     digitalWrite(DS18B20_POWER_PIN, LOW);
 
     // Calculate temperature.
-    if (TotalSensors == 0)
+    if (TotalSensors == 0) {
         Data.AvgTemperature = NAN;
-    else
+    } else {
         Data.AvgTemperature = Data.AvgTemperature / (float)TotalSensors;
+    }
 }
 
 
@@ -159,12 +162,14 @@ void ReadTemperature(TEMPERATURE_DATA& Data) {
 
 bool IsModemActive() {
     // Clear modem stream.
-    while (Modem.stream.available())
+    while (Modem.stream.available()) {
         Modem.stream.read();
+    }
 
     for (uint8_t i = 0; i < 2; i++) {
-        if (Modem.testAT(AT_TIMEOUT))
+        if (Modem.testAT(AT_TIMEOUT)) {
             return true;
+        }
         delay(MODEM_TEST_DELAY);
     }
 
@@ -201,8 +206,9 @@ bool InitModem() {
     // Wait for modem initialization.
     uint8_t Retry = 0;
     bool ModemReady = false;
-    while (!ModemReady && Retry++ < INIT_RETRY)
+    while (!ModemReady && Retry++ < INIT_RETRY) {
         ModemReady = IsModemActive();
+    }
     return ModemReady;
 }
 
@@ -213,8 +219,9 @@ bool InitSim() {
             return false;
 
         case SIM_LOCKED:
-            if (Modem.simUnlock("1234"))
+            if (Modem.simUnlock("1234")) {
                 return false;
+            }
             break;
 
         case SIM_ANTITHEFT_LOCKED:
@@ -228,14 +235,16 @@ bool InitSim() {
 void UninitModem() {
     // Try to turn modem off with AT command (software power off).
     Modem.sendAT("+CPOF");
-    if (Modem.waitResponse(AT_TIMEOUT))
+    if (Modem.waitResponse(AT_TIMEOUT)) {
         return;
+    }
 
     // If failed use power pins (hardware power off).
     // First make sure modem is alive. Otherwise we can turn it ON
     // instead.
-    if (!IsModemActive())
+    if (!IsModemActive()) {
         return;
+    }
 
     digitalWrite(A7608H_PWRKEY_PIN, HIGH);
     delay(POWER_OFF_PULSE);
@@ -251,22 +260,26 @@ void UninitModem() {
 bool ConnectToNetwork() {
     // Wait for network connection.
     uint8_t Retry = 0;
-    while (Retry++ < NETWORK_CHECK_RETRY && !Modem.isNetworkConnected())
+    while (Retry++ < NETWORK_CHECK_RETRY && !Modem.isNetworkConnected()) {
         delay(NETWORK_CHECK_INTERVAL);
+    }
     return Modem.isNetworkConnected();
 }
 
 bool ConnectToGprs() {
     // Initialize SIM card.
-    if (!InitSim())
+    if (!InitSim()) {
         return false;
+    }
     // Connect to mobile network.
-    if (!ConnectToNetwork())
+    if (!ConnectToNetwork()) {
         return false;
+    }
 
     // Check GPRS connection.
-    if (Modem.isGprsConnected())
+    if (Modem.isGprsConnected()) {
         return true;
+    }
 
     // Connect to GPRS.
     uint8_t Retry = 0;
@@ -276,8 +289,9 @@ bool ConnectToGprs() {
 
             uint8_t TestRetry = 0;
             while (TestRetry < GPRS_TEST_RETRY) {
-                if (Modem.isGprsConnected())
+                if (Modem.isGprsConnected()) {
                     return true;
+                }
 
                 TestRetry++;
                 delay(GPRS_TEST_DELAY);
@@ -302,8 +316,9 @@ void DisconnectFromGprs() {
 bool ConnectToMqtt() {
     // Check MQTT connection status. It should not be connected
     // but to be sure.
-    if (MqttClient.connected())
+    if (MqttClient.connected()) {
         return true;
+    }
 
     // Set MQTT server parameters.
     MqttClient.setServer(MQTT_SERVER, MQTT_PORT);
@@ -312,8 +327,9 @@ bool ConnectToMqtt() {
     // Try to connect to MQTT broker.
     uint8_t Retry = 0;
     while (Retry < MQTT_CONNECT_RETRY) {
-        if (MqttClient.connect(MQTT_CLIENT_ID, MQTT_USER_NAME, MQTT_PASSWORD))
+        if (MqttClient.connect(MQTT_CLIENT_ID, MQTT_USER_NAME, MQTT_PASSWORD)) {
             break;
+        }
         
         Retry++;
         delay(MQTT_CONNECT_DELAY);
@@ -333,8 +349,9 @@ bool PublishBatteryData(const BATTERY_DATA& BatteryData) {
     sprintf(Message, "%u", BatteryData.Capacity);
     // The battery capacity is important data. If we are not able to
     // publish it we must re-try in short period of time.
-    if (!MqttClient.publish(MQTT_TOPIC_BATTERY_CAPACITY, Message))
+    if (!MqttClient.publish(MQTT_TOPIC_BATTERY_CAPACITY, Message)) {
         return false;
+    }
 
     // This is not important data so it does not matter if we publish or not
     // any that.
@@ -360,8 +377,9 @@ bool PublishTemperatureData(const TEMPERATURE_DATA& TemperatureData) {
         isnan(TemperatureData.AvgTemperature) ? SENSOR_INVALID_VALUE : TemperatureData.AvgTemperature);
     // The averrage temperature is important data. So if we were not able to publish it
     // we must re-try in short period of time.
-    if (!MqttClient.publish(MQTT_TOPIC_TEMPERATURE_AVG, Message))
+    if (!MqttClient.publish(MQTT_TOPIC_TEMPERATURE_AVG, Message)) {
         return false;
+    }
 
     // The individual sensors data is not important so we do not check publishing result.
     for (uint8_t i = 0; i < SENSOR_ZONES_COUNT; i++) {
@@ -385,15 +403,17 @@ bool ProcessData() {
     BATTERY_DATA BatteryData = { 0 };
     ReadBatteryData(BatteryData);
     // Try to publish battery data.
-    if (!PublishBatteryData(BatteryData))
+    if (!PublishBatteryData(BatteryData)) {
         return false;
+    }
 
     // Read temperature sensors data.
     TEMPERATURE_DATA TemperatureData = { 0 };
     ReadTemperature(TemperatureData);
     // Sent data to MQTT broker.
-    if (!PublishTemperatureData(TemperatureData))
+    if (!PublishTemperatureData(TemperatureData)) {
         return false;
+    }
 
     // The averrage temperature is important. So if it was not read
     // correctly we must re-try in short period of time.
