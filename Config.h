@@ -1,7 +1,5 @@
 #pragma once
 
-//#include "PrivateConfig.h"
-
 /*******************************************************************************/
 /*                         Temperature sensor settings                         */
 
