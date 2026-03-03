@@ -14,7 +14,7 @@
  - 3mF x 6.3V capacitor (more capacity is better)
  
  **Required Arduino Libraries**
- - esp32 by Espressif Systems (board) 3.3.3
+ - esp32 by Espressif Systems (board) 3.3.7
  - esp32-ds18b20 2.0.3
  - TinyGsmClient 0.12.0
  - PubSubClient 2.8
