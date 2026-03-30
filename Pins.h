@@ -57,14 +57,17 @@
 #define ESP32_SENSOR_VP     ESP32_ADC_02
 #define ESP32_SENSOR_VN     ESP32_ADC_03
 
-// Partial free pins if I2C not used
-#define ESP32_GPIO_21       WIRE_SDA_PIN
-#define ESP32_GPIO_22       WIRE_SCL_PIN
-
 
 /*****************************************************/
 /*                 External hardware                 */
 
 // Temperature sensor.
-#define DS18B20_PIN         ESP32_GPIO_22
-#define DS18B20_POWER_PIN   ESP32_GPIO_23
+#define DS18B20_PIN         ESP32_GPIO_18
+#define DS18B20_POWER_PIN   ESP32_GPIO_19
+
+// Status LEDs
+#define POWER_LED_PIN       ESP32_GPIO_23
+#define GPRS_LED_PIN        ESP32_GPIO_32
+#define MQTT_LED_PIN        ESP32_GPIO_34
+#define ERROR_LED_PIN       ESP32_GPIO_36
+
