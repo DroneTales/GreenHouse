@@ -2,10 +2,10 @@
 // ===============================================================
 // Arduino IDE settings:
 //   - Board: ESP32 WROVER Kit (all versions)
-//   - CPU Frequency: 80MHz (WiFi)
+//   - CPU Frequency: 40MHz (40MHz XTAL)
 //   - Core Debug Level: None
 //   - Erase All Flash Before Sketch Upload: Disabled
-//   - Flash frequency: 80Mhz
+//   - Flash frequency: 40Mhz
 //   - Flash Mode: QIO
 //   - Flash Size: 4MB (32Mb)
 //   - Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
