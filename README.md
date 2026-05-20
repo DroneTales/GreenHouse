@@ -2,10 +2,6 @@
 
 Этот репозиторий содердит прошивку для устройства Apple HomeKit, о котором рассказано в [этом видео](https://youtu.be/).  
 
-**Симулятор схем**
-
-https://falstad.com/circuit/circuitjs.html
-
 **Используемые компоненты**
 
 - Плата LilyGO T-A7608E-H
@@ -16,7 +12,7 @@ https://falstad.com/circuit/circuitjs.html
 
 **Используемые библиотеки Arduino**
 
-- esp32 by Espressif Systems (board) 3.3.7
+- esp32 by Espressif Systems (board) 3.3.8
 - esp32-ds18b20 2.0.3
 - TinyGsmClient 0.12.0
 - PubSubClient 2.8
@@ -24,7 +20,7 @@ https://falstad.com/circuit/circuitjs.html
 **Настройки Arduino IDE**
 
 - Board: ESP32 WROVER Kit (all versions)
-- CPU Frequency: 80MHz (WiFi)
+- CPU Frequency: 80MHz (WiFi/BT)
 - Core Debug Level: None
 - Erase All Flash Before Sketch Upload: Disabled
 - Flash frequency: 80Mhz

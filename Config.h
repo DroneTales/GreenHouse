@@ -1,57 +1,92 @@
 #pragma once
 
-/*******************************************************************************/
-/*                         Temperature sensor settings                         */
+#include <Arduino.h>
 
-// Number of zones.
-#define SENSOR_ZONES_COUNT			    4
 
-// Zone 1 sensor addresses.
-#define GREEN_ADDRESS               9666714504207294760ul
-// Zone 2 sensor addresses.
-#define YELLOW_ADDRESS              18437195502557880616ul
-// Zone 3 sensor addresses.
-#define BLACK_ADDRESS               290801794589212200ul
-// Zone 4 sensor addresses.
-#define RED_ADDRESS                 16791709353807948072ul
+/******************************************************************************/
+/*                          Configuration  constants                          */
 
-static uint64_t SENSORS[SENSOR_ZONES_COUNT] =
+// GPRS APN maxumum length.
+constexpr uint8_t GPRS_APN_LEN = 64;
+// GPRS user name maximum length.
+constexpr uint8_t GPRS_USER_NAME_LEN = 64;
+// GPRS password maximum length.
+constexpr uint8_t GPRS_PASSWORD_LEN = 64;
+// SIM PIN maximum length.
+constexpr uint8_t GPRS_SIM_PIN_LEN = 4;
+
+// MQTT broker name maximum length.
+constexpr uint8_t MQTT_SERVER_NAME_LEN = 128;
+// MQTT broker user name maximum length.
+constexpr uint8_t MQTT_USER_NAME_LEN = 64;
+// MQTT broker password maximum length.
+constexpr uint8_t MQTT_PASSWORD_LEN = 64;
+// MQTT client ID maximum length.
+constexpr uint8_t MQTT_CLIENT_ID_LEN = 64;
+
+// Maximum possible number of connected sensors.
+constexpr uint8_t SENSORS_MAX_NUMBER = 10;
+
+/******************************************************************************/
+
+
+/******************************************************************************/
+/*                          Configuration data types                          */
+
+// Board configuration.
+struct BOARD_CONFIG
 {
-  GREEN_ADDRESS,
-  YELLOW_ADDRESS,
-  BLACK_ADDRESS,
-  RED_ADDRESS
+    // Short sleep interval in microseconds.
+    uint64_t    ShortSleep;
+    // Long sleep interval in milliseconds.
+    uint64_t    LongSleep;
 };
 
+// GPRS configuration.
+struct GPRS_CONFIG
+{
+    char    Apn[GPRS_APN_LEN + 1];
+    char    UserName[GPRS_USER_NAME_LEN + 1];
+    char    Password[GPRS_PASSWORD_LEN + 1];
+    char    Pin[GPRS_SIM_PIN_LEN + 1];
+};
 
-/*******************************************************************************/
-/*                          Onboard battery  settings                          */
+// MQTT configuration.
+struct MQTT_CONFIG
+{
+    // MQTT server (broker) address.
+    char        Server[MQTT_SERVER_NAME_LEN + 1];
+    uint16_t    Port;
+    char        UserName[MQTT_USER_NAME_LEN + 1];
+    char        Password[MQTT_PASSWORD_LEN + 1];
+    char        ClientId[MQTT_CLIENT_ID_LEN + 1];
+};
 
-// The empty battery voltage.
-#define EMPTY_BATTERY_VOLTS         3.4
-// The full battery voltage.
-#define FULL_BATTERY_VOLTS          4.2
-// The voltage divider. By schematic it is 1:2 but actual
-// value may vary. In my case it is 1:1.95
-#define BATTERY_VOLTAGE_DIVIDER		  1.95
-// Low battery capacity.
-#define LOW_BATTERY_CAPACITY        10
+// Sensors configuration.
+struct SENSORS_CONFIG
+{
+    // Number of sensors addresses in the address array.
+    uint8_t     Count;
+    uint64_t    Address[SENSORS_MAX_NUMBER];
+};
+
+// Full configuration.
+struct CONFIG
+{
+    BOARD_CONFIG    Board;
+    GPRS_CONFIG     Gprs;
+    MQTT_CONFIG     Mqtt;
+    SENSORS_CONFIG  Sensors;
+};
+
+/******************************************************************************/
 
 
-/*******************************************************************************/
-/*                                GPRS settings                                */
+/******************************************************************************/
+/*                          Configuration  functions                          */
 
-#define GPRS_APN              	    "<_GPRS_APN_>"
-#define GPRS_USER_NAME              "<_GPRS_USER_NAME_>"
-#define GPRS_PASSWORD               "<_GPRS_PASSWORD_>"
-#define GPRS_SIM_PIN                "<_SIM_PIN_>"
+// Reads configuration from SD-card. Returns true if the configuration is
+// valid. Returns false otherwise.
+bool ConfigRead(CONFIG& Config);
 
-/*******************************************************************************/
-/*                            MQTT  server settings                            */
-
-#define MQTT_SERVER                 "<_MQTT_SERVER_ADDRESS_>"
-#define MQTT_PORT                   <_MQTT_SERVER_PORT_>
-#define MQTT_USER_NAME              "<_MQTT_USER_NAME_>"
-#define MQTT_PASSWORD               "<_MQTT_PASSWORD_>"
-#define MQTT_CLIENT_ID              "GREEN_HOUSE"
-
+/******************************************************************************/
