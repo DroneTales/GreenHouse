@@ -133,7 +133,7 @@ Where *<homebridge>* is your HomeBridge device's IP address (let's say, *192.168
 
 Once you have completed all the configurations, it's time to test if your router is accessible from the Internet. This does not check if your *HomeBridge* device is accessible, only your *router*. This allows you to verify that your DNS settings are correct and working. (However, if your external IP is gray, it may help to check if your HomeBridge is also accessible, but it may not if Cloudflare blocks ping.) So, open the terminal (or Command Prompt on Windows) and execute the following command:  
 
-`ping <your_domain_name>'  
+`ping <your_domain_name>`  
 
 where *<your_domain_name>* is the name of your subdomain, for example:  
 
