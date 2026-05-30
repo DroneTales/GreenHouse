@@ -461,6 +461,16 @@ wget -O chart.js https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.
 
 Now copy all the files from the **Logger** directory to the **/opt/greenhouse** directory on your **HomeBridge** device. If you face any problems with copying the files, you can use a simple trick: use the nano text editor on the HomeBridge device, open the file locally, and copy-paste all the content into the nano editor. Not too fast, but it's a 100% working solution.  
 
+Do not forget to modify the **settings.py** file by updating the following lines:  
+
+```
+MQTT_SERVER     = "mqtt_server_ip"
+MQTT_USER_NAME  = "mqtt_user_name"
+MQTT_PASSWORD   = "mqtt_password"
+```
+
+Replace *mqtt_server_ip* with the correct MQTT broker IP address; *mqtt_user_name* with the correct user name; and *mqtt_password* with the correct MQTT broker password.  
+
 ### 5.3. Setting Up System Services
 
 Now we need to set up the applications to run as system services.  
