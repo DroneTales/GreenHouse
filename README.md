@@ -411,6 +411,7 @@ Now we must install the nginx web server and certbot to be able to use an SSL ce
 
 We will store all the application files in the /opt/greenhouse/ directory. The directory structure looks like this:  
 
+```
 /opt/greenhouse/  
 ├── static/  
 │   ├── css/  
@@ -432,6 +433,7 @@ We will store all the application files in the /opt/greenhouse/ directory. The d
 ├── sensors.py                # Sensors configuration  
 ├── server.py                 # Flask web application  
 └── settings.py               # Application settings  
+```
 
 All the directories must be owned by the default user. In my case, it is the *homebridge* user. So in the commands below, replace *homebridge* with your username.  
 
