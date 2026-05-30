@@ -600,6 +600,9 @@ Re-load the nginx:
 
 Congratulations! Everything has been set up and should be running. Wait for some time (remember that the temperature data is sent every 15 minutes, so you will need to wait to collect some data in the database). Next, enter your domain address in your web browser. It should show the temperature graph!  
 
+<img width="1680" height="1050" alt="Снимок экрана — 2026-05-30 в 21 35 41" src="https://github.com/user-attachments/assets/57321409-9ff9-43b6-a319-9f182bb773a2" />
+
+
 **I hope I did not forget anything important.**  
 
 Should you have any questions, please do not hesitate to contact me at gully.horror0w@icloud.com.  
