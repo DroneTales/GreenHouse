@@ -113,6 +113,7 @@ If you use a Cloudflare tunnel (meaning you have a gray IP), skip this part. In 
 
 OK, log in to your router's web interface and find the settings called "Port Forwarding" or "Port Mapping". Add three rules as shown in the table below:  
 
+```
 +---------+--------------------------------------+----------+------------------------------------------+  
 |         |                 Local                |          |                   Remote                 |  
 | Comment +--------------------------------------| Protocol +------------------------------------------+  
@@ -124,6 +125,7 @@ OK, log in to your router's web interface and find the settings called "Port For
 +---------+--------------+------------+----------+----------+--------------+-------------+-------------+  
 |  HTTPS  | <homebridge> |    443     |    443   |   TCP    |              |     443     |     443     |  
 +---------+--------------+------------+----------+----------+--------------+-------------+-------------+  
+```
 
 Where *<homebridge>* is your HomeBridge device's IP address (let's say, *192.168.0.112*) and *<mqtt_port>* is the port you decided to open for external access to your MQTT broker. It can be the standard 1883 or any port you would like, for example, *23543*, as shown in the example in the previous chapter.  
 
