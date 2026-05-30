@@ -1,0 +1,167 @@
+body
+{
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f5f5f5;
+}
+
+h1
+{
+    margin-top: 0;
+}
+
+button
+{
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+button.active-preset
+{
+    background-color: #0066cc;
+    color: white;
+    border: 1px solid #004499;
+}
+
+.container
+{
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.controls
+{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.date-range label
+{
+    margin-right: 5px;
+}
+
+.date-range input[type="date"]
+{
+    padding: 5px;
+    margin-right: 10px;
+}
+
+.presets button
+{
+    margin-right: 8px;
+}
+
+.chart-container
+{
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 200px);
+    min-height: 400px; 
+}
+
+.nav
+{
+    margin-bottom: 20px;
+}
+
+.nav a
+{
+    text-decoration: none;
+    color: #0066cc;
+}
+
+.form-section
+{
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.form-row
+{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.form-row label
+{
+    margin-right: 5px;
+}
+
+.form-row input[type="number"],
+.form-row input[type="text"]
+{
+    padding: 6px;
+    width: 100px;
+}
+
+.form-row input[type="text"]
+{
+    width: 200px;
+}
+
+.table-section table
+{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-section th,
+.table-section td
+{
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.table-section th
+{
+    background-color: #f2f2f2;
+}
+
+.edit-btn, .delete-btn
+{
+    margin-right: 5px;
+}
+
+.delete-btn
+{
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+}
+
+.edit-btn
+{
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+}
+
+.sensor-toggles
+{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.range-label
+{
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 10px 0 5px 0;
+    color: #333;
+}
