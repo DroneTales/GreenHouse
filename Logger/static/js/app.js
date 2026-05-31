@@ -203,9 +203,15 @@ function buildDatasets(dataArray, activeSensorIds, sensorMap)
         // Ensure points are sorted chronologically.
         points.sort((a, b) => a.x - b.x);
         const sensorName = sensorMap[sid] || `Sensor ${sid}`;
+
+        // Calculate minimum value.
+        const values = points.map(p => p.y);
+        const minVal = Math.min(...values);
+        const labelWithMin = `${sensorName} (${minVal.toFixed(1)})`;
+
         datasets.push(
             {
-                label: sensorName,
+                label: labelWithMin,
                 data: points,
                 borderColor: colors[colorIdx % colors.length],
                 backgroundColor: 'transparent', // No fill under the line
