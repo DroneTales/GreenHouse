@@ -380,7 +380,7 @@ If the LEDs do not start flashing for a long time after the board is powered up,
 
 ## 5. Temperature Logger
 
-The project includes two applications: the **Temperature Logger** service and the **Temperature Monitor** web application. The applications are written in Python and JavaScript. They require **Python 3.11** and the **nginx** web server. In this section, you will find detailed instructions on how to set it all up. You can check how ti works in real life using [this](https://greenhouse.dronetales.net) link.  
+The project includes two applications: the **Temperature Logger** service and the **Temperature Monitor** web application. The applications are written in Python and JavaScript. They require **Python 3.11** and the **nginx** web server. In this section, you will find detailed instructions on how to set it all up. By [this](https://greenhouse.dronetales.net) link you can see how it works in real life.  
 
 <img width="1680" height="1050" alt="Снимок экрана — 2026-05-30 в 21 35 41" src="https://github.com/user-attachments/assets/57321409-9ff9-43b6-a319-9f182bb773a2" />
 
