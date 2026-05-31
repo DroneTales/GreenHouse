@@ -382,6 +382,8 @@ If the LEDs do not start flashing for a long time after the board is powered up,
 
 The project includes two applications: the **Temperature Logger** service and the **Temperature Monitor** web application. The applications are written in Python and JavaScript. They require **Python 3.11** and the **nginx** web server. In this section, you will find detailed instructions on how to set it all up.  
 
+<img width="1680" height="1050" alt="Снимок экрана — 2026-05-30 в 21 35 41" src="https://github.com/user-attachments/assets/57321409-9ff9-43b6-a319-9f182bb773a2" />
+
 ### 5.1. Install Pre-Requirements
 
 To be able to run the applications, you need to install Python 3.11 and nginx. If you already have either of them installed, simply skip this step.  
@@ -601,9 +603,6 @@ Re-load the nginx:
 ## 6. Final test
 
 Congratulations! Everything has been set up and should be running. Wait for some time (remember that the temperature data is sent every 15 minutes, so you will need to wait to collect some data in the database). Next, enter your domain address in your web browser. It should show the temperature graph!  
-
-<img width="1680" height="1050" alt="Снимок экрана — 2026-05-30 в 21 35 41" src="https://github.com/user-attachments/assets/57321409-9ff9-43b6-a319-9f182bb773a2" />
-
 
 **I hope I did not forget anything important.**  
 
