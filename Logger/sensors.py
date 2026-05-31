@@ -1,7 +1,17 @@
 import sqlite3
 import const
 
-from flask import Blueprint, jsonify, request, render_template
+from flask import Blueprint, jsonify, request, render_template, Response
+from functools import wraps
+
+
+########################################################################
+# Hardcoded credentials for simple home use.
+
+USERNAME = 'admin'
+PASSWORD = 'greenhouse'
+
+########################################################################
 
 
 ########################################################################
@@ -11,6 +21,37 @@ from flask import Blueprint, jsonify, request, render_template
 # This Blueprint will be registered later in the main Flask application.
 
 sensor_bp = Blueprint('sensor_bp', __name__)
+
+########################################################################
+
+
+########################################################################
+# Authentication handlers.
+
+def check_auth(username, password):
+    """Check if username/password match the predefined ones."""
+
+    return username == USERNAME and password == PASSWORD
+
+
+def authenticate():
+    """Send a 401 response that triggers a basic auth dialog."""
+
+    return Response(
+        'Authentication required.',
+        401,
+        {'WWW-Authenticate': 'Basic realm="Greenhouse Sensors"'}
+    )
+
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
 
 ########################################################################
 
@@ -31,6 +72,7 @@ def get_db():
 # Front‑end page.
 
 @sensor_bp.route('/sensors')
+@requires_auth
 def sensors_page():
     """
     Render the sensors management HTML page.
@@ -47,6 +89,7 @@ def sensors_page():
 # API endpoints.
 
 @sensor_bp.route('/api/sensors', methods=['POST'])
+@requires_auth
 def api_add_sensor():
     """
     Add a new sensor to the SENSORS table.
@@ -94,6 +137,7 @@ def api_add_sensor():
 
 
 @sensor_bp.route('/api/sensors/<int:sensor_id>', methods=['PUT'])
+@requires_auth
 def api_update_sensor(sensor_id):
     """
     Update the name of an existing sensor.
@@ -139,6 +183,7 @@ def api_update_sensor(sensor_id):
 
 
 @sensor_bp.route('/api/sensors/<int:sensor_id>', methods=['DELETE'])
+@requires_auth
 def api_delete_sensor(sensor_id):
     """
     Delete a sensor from the SENSORS table.
