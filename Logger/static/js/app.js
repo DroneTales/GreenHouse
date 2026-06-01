@@ -205,13 +205,14 @@ function buildDatasets(dataArray, activeSensorIds, sensorMap)
         const sensorName = sensorMap[sid] || `Sensor ${sid}`;
 
         // Calculate minimum value.
-        const values = points.map(p => p.y);
+        /*const values = points.map(p => p.y);
         const minVal = Math.min(...values);
-        const labelWithMin = `${sensorName} (${minVal.toFixed(1)})`;
+        const labelWithMin = `${sensorName} (${minVal.toFixed(1)})`;*/
 
         datasets.push(
             {
-                label: labelWithMin,
+                //label: labelWithMin,
+                label: sensorName,
                 data: points,
                 borderColor: colors[colorIdx % colors.length],
                 backgroundColor: 'transparent', // No fill under the line
