@@ -54,9 +54,46 @@ button.active-preset
     margin-right: 10px;
 }
 
-.presets button
+.presets-group
 {
-    margin-right: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border: 2px solid #cccccc;
+    border-radius: 8px;
+    background-color: #fafafa;
+}
+
+.presets-group button
+{
+    margin-right: 0;
+}
+
+.date-group
+{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 2px solid #cccccc;
+    border-radius: 8px;
+    background-color: #fafafa;
+}
+
+.sensors-group
+{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 2px solid #cccccc;
+    border-radius: 8px;
+    background-color: #fafafa;
+    margin-top: 0;
 }
 
 .chart-container
@@ -156,6 +193,11 @@ button.active-preset
     align-items: center;
     gap: 10px;
     margin-top: 10px;
+}
+
+.sensors-group .sensor-toggles
+{
+    margin-top: 0;
 }
 
 .range-label

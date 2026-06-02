@@ -12,22 +12,27 @@
             <h1>Greenhouse Temperature History</h1>
     
             <div class="controls">
-                <div class="date-range">
-                    <label for="start-date">Start:</label>
-                    <input type="date" id="start-date">
-                    <label for="end-date">End:</label>
-                    <input type="date" id="end-date">
+                <div class="date-group">
+                    <div class="date-range">
+                        <label for="start-date">Start:</label>
+                        <input type="date" id="start-date">
+                        <label for="end-date">End:</label>
+                        <input type="date" id="end-date">
+                    </div>
                     <button id="apply-btn">Apply</button>
                 </div>
-
-                <div class="presets">
+    
+                <div class="presets-group">
+                    <button id="yesterday-btn">Yesterday</button>
                     <button id="24h-btn">Last 24</button>
                     <button id="today-btn">Today</button>
                     <button id="week-btn">Last week</button>
                     <button id="month-btn">Last month</button>
                 </div>
-
-                <div id="toggleable-sensors" class="sensor-toggles"></div>
+    
+                <div class="sensors-group">
+                    <div id="toggleable-sensors" class="sensor-toggles"></div>
+                </div>
             </div>
             
             <div class="chart-container">
