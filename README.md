@@ -614,10 +614,7 @@ If you like what I am doing, you can support me using one of the links below:
 
 **BuyMeACoffee**: https://buymeacoffee.com/dronetales  
 **Boosty**: https://boosty.to/drone_tales/donate  
-  
-**BTC**: bitcoin:1A1WM3CJzdyEB1P9SzTbkzx38duJD6kau  
-**BCH**: bitcoincash:qre7s8cnkwx24xpzvvfmqzx6ex0ysmq5vuah42q6yz  
-**ETH**: 0xf780b3B7DbE2FC74b5F156cBBE51F67eDeAd8F9a  
+**PayPal**: mike@btframework.com  
 
 
 
