@@ -83,35 +83,33 @@
 
 Если же у вас динамический белый внешний IP адрес, то доменное имя будет предоставлено сервисом DynDNS. Однако лучше обратиться к правилам оказания услуг вашего DynDNS сервиса для уточнения деталей.  
 
-Below, I will assume that you have purchased a domain name and that it is controlled by Cloudflare. If you use DynDNS, then you can ignore all Cloudflare-related parts in the text below.  
+Далее я буду предполагать, что вы приобрели или перенесли ваш домен на Cloudflare. Если вы используете DynDNS, то можете пропустить все, что касается Cloudflare далее.  
 
-### 1.3. Setting Up DNS Records
+### 1.3. Настройка записей DNS
 
-Unfortunately, if you have a dynamic external IP and use a DynDNS service, then in most cases you cannot have subdomains: your domain name will look like mygreenhouse.dyndns.com or something similar. In other cases (static white or gray external IP), you can create subdomains, and we will do so to separate traffic and protect our home network from attacks.  
+К сожалению, если у вас динамический внешний IP и вы используете сервис DynDNS, то в большинстве случаев вы не сможете создать субдомены: имя вяшего домена будет выглядить как mygreenhouse.dyndns.com или что-то аналогичное. В других случаях (статический белый или серый IP), вы сможете создать субдомены и мы сделаем это для разделения графика и защиты домашней сети.  
 
-Now we will create two subdomains: **chart** and **broker**. The first one will be used to access the temperature history chart, and the second one will be used to access your MQTT broker. Open your Cloudflare (or other) control panel and go to the DNS settings. Add two **A** records. Let's say your domain is greenhouse.home and your external IP is 20.22.24.26. Then the first **A** record should look like this:  
+Сайчса мы содадим два субдомена: **chart** и **broker**. Первый будет использоваться для доступа к WEB интерфейсу графика температур, а второй - для доступа к MQTT брокеру. Откройте панель управления доменом на Cloudflare (или другом регистраторе доменов, который вы используете). Добавьте две **A** записи. Допустим, что имя вашего домена **greenhouse.home** и ваш внешний IP **20.22.24.26**. Тогда первая **A** запись будет выглядеть как:  
 
 `A  chart.greenhouse.home  20.22.24.26`  
 
-Some DNS servers use it in reverse (which is, actually, the correct form):  
+Некоторые DNS сервера (точнее, их панели управления) используют обратную запись (что, в действительности, верно):  
 
 `A  home.greenhouse.chart  20.22.24.26`  
 
-Anyway, add the second one for the **broker** subdomain:  
+В любом случе, добавьте вторую **A** запись для поддомена **broker**:  
 
 `A  broker.greenhouse.home 20.22.24.26`  
 
-or  
+или  
 
 `A  home.greenhouse.broker  20.22.24.26`  
 
-If you use Cloudflare with a static IP, then set the first one (chart) as **Proxied**. If you have a gray external IP address, then follow the Cloudflare tunnel setup instructions to find out how to add subdomains. **Do not forget to open the HTTP (80), HTTPS (443), and MQTT ports in the tunnel settings.** You can use the standard MQTT port (1883), but it is better to use a different one known only to you, for example, 23543 or something like that. Remember that port. You will need it later.  
+Если вы используете Cloudflare со статическим IP адресом, то сконфигурируйте первый субдомен (chart) как **Proxied**. Если у вас серый внешний IP, то следуйте инструкции по настройке тунеля Cloudflare. **Не забудьте открыть порты HTTP (80), HTTPS (443), и MQTT ports в настройках тунеля.** Вы можете использовать стандартный порт MQTT (1883), но будет лучше, если вы используете другой порт, например 23543.  
 
-### 1.4. Router Port Forwarding
+### 1.4. Настройка пробросал портов
 
-If you use a Cloudflare tunnel (meaning you have a gray IP), skip this part. In other cases (DynDNS with a white dynamic or static IP), you need to set up port forwarding on your router so that applications (your web browser and the greenhouse controller) can connect to your HomeBridge device, which is located on your home local network and isolated from internet access by your router.  
-
-OK, log in to your router's web interface and find the settings called "Port Forwarding" or "Port Mapping". Add three rules as shown in the table below:  
+Если вы используете CloudFlare тунель, то пропустите эту часть. В противном случае вам необходимо настроить проброс портов (Port Forwarding) на вашем роутере для того, что бы контроллер теплицы мог отправлять данные вашему MQTT брокеру и что бы вы имели доступ к WEB интерфейсу. Для этого зайдите в настройки вашего роутера и найдите раздел, который называется "Port Forwarding" или "Port Mapping". Добавьте следующие три правила, как показано в таблице ниже:  
 
 | Comment |  Local IP    | Start port | End port | Protocol | Remote IP    | Start  port |   End port  |  
 |:-------:|:------------:|:----------:|:--------:|:--------:|:------------:|:-----------:|:-----------:|
@@ -119,29 +117,29 @@ OK, log in to your router's web interface and find the settings called "Port For
 |  HTTP   | <homebridge> |    80      |    80    |   TCP    |              |      80     |      80     |  
 |  HTTPS  | <homebridge> |    443     |    443   |   TCP    |              |     443     |     443     |  
 
-Where *<homebridge>* is your HomeBridge device's IP address (let's say, *192.168.0.112*) and *<mqtt_port>* is the port you decided to open for external access to your MQTT broker. It can be the standard 1883 or any port you would like, for example, *23543*, as shown in the example in the previous chapter.  
+Где *<homebridge>* - IP адрес вашего HomeBridge сервера (скажем, *192.168.0.112*), а *<mqtt_port>* - порт MQTT брокера, который вы решили "выставить" наружу. Это может быть как стандартный MQTT порт - 1883, так и любой другой, который вам нравится. Например: *23543*.  
 
-**Once again, you will need to configure port forwarding only if you have a white static or white dynamic external IP address. If you have a gray external IP address, you need to do all the port configuration in the Cloudflare tunnel client and server; refer to the Cloudflare tunnel instructions.**  
+**Повторю: настраивать проброс портов нужно только в том случае, если у вас белый статический либо белый динамический внешний IP адрес. Если у вас серый внешний IP адрес, то все настройки должны быть произведены в клиенте и сервере Cloudflare туннеля. Обратитесь к инструкции по настройке туннеля Cloudflare за подробностями.**  
 
-### 1.5. Testing
+### 1.5. Проверка
 
-Once you have completed all the configurations, it's time to test if your router is accessible from the Internet. This does not check if your *HomeBridge* device is accessible, only your *router*. This allows you to verify that your DNS settings are correct and working. (However, if your external IP is gray, it may help to check if your HomeBridge is also accessible, but it may not if Cloudflare blocks ping.) So, open the terminal (or Command Prompt on Windows) and execute the following command:  
+Пригло время проверить ваши настройки и возможность доступа к вашему серверу из вне. Эта проверка не гарантирует, что ваш *HomeBridge* сервер доступен, она лишь проверяет ваш *роуетр*. Это позволит убедиться, что DNS настроены корректно. И так, откройте терминал (или командную строку на Windows) и выполните следующую команду:  
 
 `ping <your_domain_name>`  
 
-where *<your_domain_name>* is the name of your subdomain, for example:  
+где *<your_domain_name>* - имя вашего субдомена, например:  
 
 `ping chart.greenhouse.home`  
 `ping broker.greenhouse.home`  
 
-You should see responses like the ones below (or similar):  
+Вы должны увидеть что-то вроде этого:  
 
 ```
 64 bytes from 20.22.24.26: icmp_seq=0 ttl=64 time=3.963 ms
 64 bytes from 20.22.24.26: icmp_seq=1 ttl=64 time=4.059 ms
 ```
 
-(Of course, instead of 20.22.24.26, you will see your own IP address.). If you see something like this:  
+(Конечно, вместо 20.22.24.26, вы должны увидеть ваш IP адрес.). Если же вы видите что-то вроде:  
 
 ```
 Request timeout for icmp_seq 0
@@ -149,7 +147,7 @@ Request timeout for icmp_seq 1
 Request timeout for icmp_seq 2
 ```
 
-then there is something wrong with your DNS settings or your IP (maybe it is **gray** or **behind a NAT**?).  
+значит что-то не так с настройками вашего DNS сервера или IP (может он **серый** или **за NAT**?).  
 
 ## 2. Finding Temperature Sensor Addresses
 
