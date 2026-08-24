@@ -316,11 +316,11 @@ Request timeout for icmp_seq 2
 
 ### 4.1. Подготовка SD-Card
 
-Now you need a micro SD card. The card is used to store the GSM, MQTT, and sensor configuration. Later, I will probably add logging to the card and other things I have in my plans. But currently, it is used to store the configuration file. So format the SD card as **FAT32** and copy the *config.txt* file to it. The file must be in the root of the card's file system.  
+Теперь вам понадобится микро SD карта. Карта используется для хранения настроек GSM, MQTT, и датчиков температуры. Отформатируйте карту в **FAT32** и скопируйте на нее файл *config.txt*. Файл должен быть расположен в корне файловой системы карты.  
 
-### 4.2. Updating the Configuration File
+### 4.2. Обновление конфигурационного файла
 
-Now you should update the configuration file. Open it in any text editor (make sure that the selected text editor saves the file as ASCII and in raw text format). You will see the content of the file as shown below:  
+Теперь вы должны изменить конфигурационный файл под ваши параметры. Откройте его в любом текстовом редакторе (убедитесь, что выбранный текстовый редактор может сохранить файл как простой текст в ASCII кодировке). Вы виде содержимое файл как показано ниже:  
 
 ```
 [Board]
@@ -348,19 +348,17 @@ Address_2=290801794589212200
 Address_3=16791709353807948072
 ```  
 
-You can find few sections there.  
+#### 4.2.1. Раздел Board
 
-#### 4.2.1. The Board Section
+В этом разделе всего два параметра: **ShortSleep** и **LongSleep**. Параметр **ShortSleep** указывает время сна в микросекудах, которое используется, если плата не смогла отправить данные на сервер. Если отправка данных была неудачна, что плата заснет на этот период времени. Значение по-умолчанию - 2 минуты. Параметр **LongSleep** - это время сна в микросекундах, которое используется когда данные были успешно переданы. Значение по-умолчанию - 15 минут.  
 
-This section contains two parameters: **ShortSleep** and **LongSleep**. The **ShortSleep** parameter is the sleep time in micro-seconds used when the board was not able to send temperature data. If the data sending fails, the board goes to sleep for this **ShortSleep** interval. The default value is 2 minutes. The **LongSleep** parameter is the sleep interval in micro-seconds used when the data was sent successfully. The default value is 15 minutes.  
+#### 4.2.2. Раздел GPRS
 
-#### 4.2.2. The GPRS Section
+Раздел *GPRS* содержит настройки вашей мобильной сети. Вы должны указать ваши **APN**, **username**, **password** и SIM **PIN**. Вы можете оставить пустыми те параметры, которые не требуются вашим мобильным оператором.  
 
-The *GPRS* section contains the mobile network parameters. You should provide the **APN**, the **username**, the **password**, and the SIM **PIN**. You can leave some of them empty if they are not required by your mobile network operator.  
+#### 4.2.3. Раздел MQTT
 
-#### 4.2.3. The MQTT Section
-
-Here you should provide your MQTT broker settings. The **Server** parameter must be set to the MQTT server domain name (in our example above, we used *broker.greenhouse.home* as the MQTT server name, so you should set the **Server** parameter to this value). The **Port** parameter is the MQTT broker port number (in our example above, it is *5555*). The **UserName** and **Password** parameters are the MQTT broker *username* and *password*. The **ClientID** is the **unique** MQTT broker client ID. You can leave it as it is.  
+Здесь вы должны указать настройки вашего MQTT брокера (сервера). Параметр **Server** - доменное имя вашего MQTT сервера (в примере, приведенном выше,  используется *broker.greenhouse.home*). Параметр **Port** - номер порта MQTT брокера (в нашем примере это *5555*). Параметры **UserName** и **Password**  - это имя пользователя и пароль для доступа к MQTT брокеру. Параметр **ClientID** - уникальное имя клиента **unique** MQTT брокера. Вы можете оставить его как есть.  
 
 #### 4.2.4. The Sensors Section
 
