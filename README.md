@@ -79,9 +79,9 @@
 
 Если вы уже владеете каким-либо доменным именем, то вы можете пропустить эту часть. Однако, я рекомендую перенести ваш домен на Cloudflare потому, что мы будем использовать CloudFlare как DNS прокси для защиты вашей домашней сети от внешнего мира.  
 
-If you do not own a domain name and you have a white static or gray external IP address, you will need to purchase one. There are a lot of services that offer domain names. I personally use Namecheap and Cloudflare. For this project, it is better if you purchase the domain name from Cloudflare, so you will not need to transfer it to Cloudflare later.  
+Если вы не владеете доменным именем (для простоты - доменом) и у вас внешний белый статический или серый внешний IP адрес, то вам необходимо приобрести домен. Сервисов, которые предоставляют услуги регистрации доменных имен полно, но лично я использую два: Namecheap и Cloudflare. Для данного проекта будет лучше, если вы зарегистрируете доменное имя через Cloudflare, тогда вам не придется переносить его на Cloudflare позже.  
 
-If you have a white dynamic external IP address, then a domain name can be provided by the DynDNS service and you do not need to purchase one. However, check your DynDNS service's rules.  
+Если же у вас динамический белый внешний IP адрес, то доменное имя будет предоставлено сервисом DynDNS. Однако лучше обратиться к правилам оказания услуг вашего DynDNS сервиса для уточнения деталей.  
 
 Below, I will assume that you have purchased a domain name and that it is controlled by Cloudflare. If you use DynDNS, then you can ignore all Cloudflare-related parts in the text below.  
 
