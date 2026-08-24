@@ -123,7 +123,7 @@
 
 ### 1.5. Проверка
 
-Пригло время проверить ваши настройки и возможность доступа к вашему серверу из вне. Эта проверка не гарантирует, что ваш *HomeBridge* сервер доступен, она лишь проверяет ваш *роуетр*. Это позволит убедиться, что DNS настроены корректно. И так, откройте терминал (или командную строку на Windows) и выполните следующую команду:  
+Пришло время проверить ваши настройки и возможность доступа к вашему серверу из вне. Эта проверка не гарантирует, что ваш *HomeBridge* сервер доступен, она лишь проверяет ваш *роуетр*. Это позволит убедиться, что DNS настроены корректно. И так, откройте терминал (или командную строку на Windows) и выполните следующую команду:  
 
 `ping <your_domain_name>`  
 
@@ -376,32 +376,32 @@ Address_3=16791709353807948072
 
 ## 5. Логгер температуры
 
-The project includes two applications: the **Temperature Logger** service and the **Temperature Monitor** web application. The applications are written in Python and JavaScript. They require **Python 3.11** and the **nginx** web server. In this section, you will find detailed instructions on how to set it all up. By [this](https://greenhouse.dronetales.net) link you can see how it works in real life.  
+Проект содержит два приложения: сервис **Temperature Logger** и WEB приложения **Temperature Monitor**. Приложения написаны на Python и JavaScript. Необходим **Python 3.11** и WEB серсвер **nginx**. В этом разделе вы найдете детальные инструкции по установке всего необходимого. По [этой](https://greenhouse.dronetales.net) вы можете посмотреть, как это выглядит в реальности.  
 
 <img width="1680" height="1050" alt="Снимок экрана — 2026-05-30 в 21 35 41" src="https://github.com/user-attachments/assets/57321409-9ff9-43b6-a319-9f182bb773a2" />
 
-### 5.1. Install Pre-Requirements
+### 5.1. Установка зависимостей
 
-To be able to run the applications, you need to install Python 3.11 and nginx. If you already have either of them installed, simply skip this step.  
+Для запуска этих приложений вам потребуется Python 3.11 и nginx. Если у вас установлено одно из этих приложений, просто пропустите соответствующий шаг.  
 
-#### 5.1.1. Install Python
+#### 5.1.1. Установка Python
 
-First, let's install Python 3.11. To do so, log in to your HomeBridge device via SSH and execute the following command:  
+Для начала давайте установим Python 3.11. Для этого зайдите на свой сервер HomeBridge через SSH и выполните следующую команду:  
 
 ```
 sudo apt update
 sudo apt install python3.11 python3.11-venv
 ```  
 
-#### 5.1.2. Install nginx
+#### 5.1.2. Установка nginx
 
-Now we must install the nginx web server and certbot to be able to use an SSL certificate from Let's Encrypt. To install nginx, execute the following command:  
+Теперь нам необходимо установить nginx и certbot. Последний нужен для того, что бы получить SSL сертификат с сервиса Let's Encrypt. Для установки nginx выполните следующую команду:  
 
 `sudo apt install nginx certbot python3-certbot-nginx`  
 
-### 5.2. Prepare the Directory Structure
+### 5.2. Подготовка директорий
 
-We will store all the application files in the /opt/greenhouse/ directory. The directory structure looks like this:  
+Все файлы приложений будут храниться в директории /opt/greenhouse/. Структура директорий должна выглядеть как показано ниже:  
 
 ```
 /opt/greenhouse/  
@@ -427,7 +427,7 @@ We will store all the application files in the /opt/greenhouse/ directory. The d
 └── settings.py               # Application settings  
 ```
 
-All the directories must be owned by the default user. In my case, it is the *homebridge* user. So in the commands below, replace *homebridge* with your username.  
+Владельцем всех директорий должен выступать текущий пользователь. В моем случае это пользователь *homebridge*. В команде ниже замените *homebridge* на имя вашего пользователя.  
 
 ```
 sudo mkdir /opt/greenhouse
@@ -439,7 +439,7 @@ mkdir static/js
 mkdir templates
 ```  
 
-#### 5.2.1. Set Up the Python Virtual Environment
+#### 5.2.1. Настройка Python Virtual Environment
 
 ```
 python3.11 -m venv .venv
@@ -448,18 +448,18 @@ pip install Flask waitress
 source deactivate
 ```
 
-#### 5.2.2. Download Chart.js Library
+#### 5.2.2. Загрузка библиотеки Chart.js
 
 ```
 cd /opt/greenhouse/static/js
 wget -O chart.js https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js
 ```  
 
-#### 5.2.3. Install Applications Files
+#### 5.2.3. Установка файлов приложения
 
-Now copy all the files from the **Logger** directory to the **/opt/greenhouse** directory on your **HomeBridge** device. If you face any problems with copying the files, you can use a simple trick: use the nano text editor on the HomeBridge device, open the file locally, and copy-paste all the content into the nano editor. Not too fast, but it's a 100% working solution.  
+Теперь скопируйте все файлы из директории **Logger** в директорию **/opt/greenhouse** на вашем **HomeBridge** сервере. Если вы столкнулись с любой проблемой в процессе копирования, вы можете использовать следующий трюк: используйте текстовый редактор nano на вашем сервере HomeBridge, откройте файл локально и скопируйте-вставьте содержимое соответствующего файла в nano. Не самый быстрый способ, но зато 100% рабочий.  
 
-Do not forget to modify the **settings.py** file by updating the following lines:  
+Не забудьте изменить файл **settings.py** обновив следующие строки:  
 
 ```
 MQTT_SERVER     = "mqtt_server_ip"
@@ -467,19 +467,19 @@ MQTT_USER_NAME  = "mqtt_user_name"
 MQTT_PASSWORD   = "mqtt_password"
 ```
 
-Replace *mqtt_server_ip* with the correct MQTT broker IP address; *mqtt_user_name* with the correct user name; and *mqtt_password* with the correct MQTT broker password.  
+Замените *mqtt_server_ip* на корректный IP адрес вашего MQTT брокера; *mqtt_user_name* - на корректное имя пользователя и *mqtt_password* - на корректный пароль.  
 
-### 5.3. Setting Up System Services
+### 5.3. Установка и запуск системного сервиса
 
-Now we need to set up the applications to run as system services.  
+Теперь необходимо настроить приложения, что бы они выполнялись как системный сервис.  
 
-#### 5.3.1. Run the Web App As a Systemd Service
+#### 5.3.1. Запуск WEB приложения как системный сервис
 
-Execute the following command:  
+Выполните следующую команду:  
 
 `sudo nano /etc/systemd/system/greenhouse-web.service`  
 
-The copy and paste the following line into the create file:  
+Затем вставьте следующее содержимое в созданный файл:  
 
 ```
 [Unit]
@@ -499,7 +499,7 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-Enable and start the service.  
+Подключаем и запускаем сервис.  
 
 ```
 sudo systemctl daemon-reload
@@ -507,13 +507,13 @@ sudo systemctl enable greenhouse-web
 sudo systemctl start greenhouse-web
 ```  
 
-#### 5.3.2. Run the Logger App As a Systemd Service
+#### 5.3.2. Запуск приложения Logger как системный сервис
 
-Execute the following command:  
+Выполните следующую команду:  
 
 `sudo nano /etc/systemd/system/greenhouse-logger.service`  
 
-The copy and paste the following line into the create file:  
+Затем вставьте следующее содержимое в созданный файл:  
 
 ```
 [Unit]
@@ -533,7 +533,7 @@ RestartSec=10
 WantedBy=multi-user.target
 ```  
 
-Enable and start the **Logger** service.
+Подключение и запуск сервиса **Logger**.
 
 ```
 sudo systemctl daemon-reload
@@ -541,13 +541,13 @@ sudo systemctl enable greenhouse-logger
 sudo systemctl start greenhouse-logger
 ```
 
-### 5.4. Create an Initial nginx Configuration
+### 5.4. Настройка nginx
 
-Execute the following command:  
+Выполните следующую команду:  
 
 `sudo nano /etc/nginx/sites-available/greenhouse`
 
-The copy and paste the following lines to the just created file.  
+Вставьте следующее содержимое в созданный файл.  
 
 ```
 server {
@@ -564,9 +564,9 @@ server {
 }
 ```
 
-Replace the *chart.greenhouse.home* with your domain name.  
+Замените *chart.greenhouse.home* на имя вашего домена.  
 
-Enable the site.  
+Подключите сайт.  
 
 ```
 sudo ln -s /etc/nginx/sites-available/greenhouse /etc/nginx/sites-enabled/
@@ -574,43 +574,28 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```  
 
-### 5.5. Obtain SSL Certificate.
+### 5.5. Получение SSL сертификата
 
 `sudo certbot --nginx -d chart.greenhouse.home`  
 
-Replace the *chart.greenhouse.home* with your domain name.  
+замените *chart.greenhouse.home* на имя вашего домена.  
 
-Follow the prompts. Certbot will automatically modify your Nginx config to listen on port 443 with SSL and set up HTTP→HTTPS redirection.  
+Следуйте инструкции. Certbot автоматически изменит конфигурацию Nginx для работы с SSL и протоколом HTTPS.  
 
-#### 5.5.1. SSL Certificate Auto‑Renewal Setup
+#### 5.5.1. Настройка автообновления SSL сертификата
 
-Certbot installs a systemd timer by default. Verify it’s active:  
+Certbot сам настроит таймер systemd. Проверьте, что он активен:  
 
 `sudo systemctl status certbot.timer`  
 
-It will renew certificates automatically twice a day. You can also test the renewal process with:  
+Проверить процесс автообновление можно следующей командой:  
 
 `sudo certbot renew --dry-run`  
 
-Re-load the nginx:  
+Перезапустите nginx:  
 
 `sudo nginx -t && sudo systemctl reload nginx`
 
-## 6. Final test
+**Надеюсь, я не забыл ничего важного.**  
 
-Congratulations! Everything has been set up and should be running. Wait for some time (remember that the temperature data is sent every 15 minutes, so you will need to wait to collect some data in the database). Next, enter your domain address in your web browser. It should show the temperature graph!  
-
-**I hope I did not forget anything important.**  
-
-Should you have any questions, please do not hesitate to contact me at gully.horror0w@icloud.com.  
-
-## 7. Support the author
-
-If you like what I am doing, you can support me using one of the links below:  
-
-**BuyMeACoffee**: https://buymeacoffee.com/dronetales  
-**Boosty**: https://boosty.to/drone_tales/donate  
-**PayPal**: mike@btframework.com  
-
-
-
+Если у вас возникли какие-либо вопросы, вы можете задать их в моем [телеграм канале](t.me/drone_tales).  
