@@ -1,27 +1,27 @@
-# Greenhouse Contoller for Apple Home
+# Контроллер теплицы для Apple Home
 
-In this repository you will find a firmware, a schematic, a Python data logger and a WEB-application that allows you to build your own Apple Home compatible greenhouse controller. Should you have any questions, please do not hesitate to contact me at gully.horror0w@icloud.com.  
+Здесь вы найдете прошивку и схему контроллера теплицы, совместимого с Apple Home. Так же, здесь представлены Python скрипты для запуска логгера температуры и WEB-интерфейса контрля температуры, которые вы можете запустить на своем домашнем сервере. По любым вопросам добро пожаловать в мой [телеграм канале](t.me/drone_tales).  
 
-**Required components**
+**Используемые компоненты**
 
-- LilyGO T-A7608E-H or T-A7608SA-H board - 1 pcs.
-- DS18B20 temperature sensor - 1-10 pcs.
-- Transistor 2N3906 - 1 pcs.
-- Transistor 2N3904 - 1 pcs.
-- Resistor 100 Ohm - 1 pcs.
-- Resistor 1K - 2pcs.
-- Resistor 4.7K - 1 pcs.
-- Resistor 47K - 1 pcs
-- Capacitor 3000mF x 6.3V - 1 pcs.
+- LilyGO T-A7608E-H or T-A7608SA-H board - 1 шт.
+- Датчик температуры DS18B20 - 1-10 шт.
+- Транзистор 2N3906 - 1 шт.
+- Транзистор 2N3904 - 1 шт.
+- Резистор 100 Ohm - 1 шт.
+- Резистор 1K - 2 шт.
+- Резистор 4.7K - 1 шт.
+- Резистор 47K - 1 шт.
+- Конденсатор 3000mF x 6.3V - 1 шт.
 
-**Required Arduino librarues**
+**Используемые библиотеки Arduino**
 
 - esp32 by Espressif Systems (board) 3.3.8
 - esp32-ds18b20 2.0.3
 - TinyGsmClient 0.12.0
 - PubSubClient 2.8
  
-**Arduino IDE settings**
+**Настройки Arduino IDE**
 
 - Board: ESP32 WROVER Kit (all versions)
 - CPU Frequency: 80MHz (WiFi/BT)
@@ -34,50 +34,50 @@ In this repository you will find a firmware, a schematic, a Python data logger a
 - PSRAM: Enabled
 - Upload Speed: 921600
 
-## 1. Preparing home network
+## 1. Подготовка домашней сети
 
-I assume that you already have a **HomeBridge** setup and running on your local network. You will also need an MQTT broker running locally. Follow [these](https://github.com/DroneTales/VideoDoorbell) instructions to set up the Mosquitto MQTT broker. I also assume that you are familiar with your home modem or router and are able to configure it.  
+Я предположу, что вы уже имеете настроенный и работающий у вас в сети **HomeBridge**. Вам также понадобится MQTT брокер, запущенный на вашем домашнем сервере. Следуйте [этим](https://github.com/DroneTales/VideoDoorbell) инструкциям для установки и настройки Mosquitto MQTT брокера. Я так же предполагаю, что вы знакомы с настройками вашего домашнего модема или роутера и способны произвести его конфигурацию.  
 
-### 1.1. Checking Your IP Address Type
+### 1.1. Проверка вашего IP адреса
 
-The very first thing we need to do is check what your external IP address type is. There are three common IP types: static white, dynamic white, and gray. The term **white** means that the IP address assigned to your modem or router is the same as the one seen from the Internet. The term **gray** means that the IP address assigned to your modem or router is different from the one seen from the Internet (because your device is behind a NAT). I believe that you know if you have a static white IP address, because to have one you need an agreement with your ISP. So you can simply skip the following parts regarding dynamic white and gray addresses.  
+В первую очередь мы должны узнать тип вашего внешнего IP адреса. Бывает три типа внешних IP адресов: статический белый, динамический белый и серый IP адрес. Термин **белый** означает, что IP адрес, назначенный вашему модему или роутеру, это тот же самый IP адрес, который виден из Internet. Термин **серый** означает, что IP адрес, назначенный вашему модему или роутеру, отличается от того, который виден из Internet (потому, что ваше устройство находится за NAT провайдеры). Я уверен, что если у вас белый внешний IP адрес, то вы точно об этом знаете, потому, что для получение такого адреса необходим договор с провайдером и ежемесячная оплата этой услуги. В этом случае вы можете смело пропустить части о серых адресах.  
 
-So now let's check your IP address type. Open your modem (or router; further on, I will refer to this network device simply as the router) web interface or connect to it via SSH and check what IP address has been assigned by your ISP. Usually this information can be found on a Status page or something similar. If you connect to your router via SSH, you can use one of the following commands:  
+Теперь нам нужно проверить тип вашего внешнего IP адреса. Для этого зайдите в WEB интерфейс вашего модема или роутера (далее я буду называть это устройство роутером) и посмотрите, какой адрес был назначен ему вашим Internet провайдером. Обычно, эта информация может быть найдена на странице "Статус". Если вы подключились к вашему роутеру по SSH, то выполните следующие команды, что бы посмотреть назначенный IP адрес.  
 
 `cat /tmp/dhcp.leases`  
 `ip addr show or ifconfig`  
 `ip neigh`  
 `arp -an`  
 
-The correct command depends on your router's firmware. Once you have found the assigned IP, open [this](https://www.myip.com) page to see how your IP is seen from the Internet.  
+Точные команды зависят от прошивки вашего роутера. Но если вы работает с ним по SSH я могу смело предположить, что вы знаете как посмотреть IP адрес. Как только вы нашли назначенный IP адрес, откройте [эту](https://www.myip.com) страницу, что бы узнать, какой IP адрес видится извне.  
 
-If the address on the router is identical to the one shown on the MyIP page, then you have a white external IP. That is great. If the address shown on the MyIP page is different from the one that is assigned to your modem, then you have a gray IP address.  
+Если адреса совпадают (на странице вы видите тот же IP, что и на вашем роутере), то значит, что у вас белый внешний IP адрес, что очень хорошо. Если же IP адреса не совпадают, то у вас серый IP адрес и потребуются чуть больше работы для настройки внешнего подключения.  
 
-Now, if you have a white external IP address and are not sure if it is static or dynamic, then do the following:  
+Теперь, если у вас белый внешний IP и вы не уверены, статический он или динамический, то выполните следующие шаги, что бы узнать точный тип вашего внешнего IP адреса:  
 
-- Remember the current IP address.
-- Turn your router **off**.
-- Wait few minutes.
-- Turn the router **on**.
-- Check the IP address again.
+- Запомните (или запишите) текущий IP адрес.
+- **Выключите** ваш роутер.
+- Подождите несколько минут.
+- **Включите** ваш роутер.
+- Проверьте назначенный IP адрес.
 
-You may need to turn your router off and on a couple of times to force the address to change. If the IP address is still the same, then you have a static one. If it has changed, then you have a dynamic external IP address that can change from time to time.  
+Возможно, потребуется выключить и включить можем несколько раз, для того, что бы провайдер сменил назначенный IP адрес. Если IP адрес не меняется, то у вас статический внешний IP адрес. Если меняется - то динамический.  
 
-#### 1.1.1. Static White External IP
+#### 1.1.1. Статический белый IP
 
-If you have a static white external IP address, then you do not need to do anything special at this stage.  
+Если у вас статический белый внешний IP, то никаких специальных действий делать не нужно.  
 
-#### 1.1.2. Dynamic White External IP
+#### 1.1.2. Динамический белый IP
 
-In the case of a dynamic white external IP address, you will need to configure DynDNS on your router. Follow your router manufacturer's and chosen DynDNS service's instructions to configure DynDNS on your router.  
+В случае, если у вас динамический белый внешний IP, вам понадобится настроить службу DynDNS на вашем роутере. Следуйте инструкции к вашему роутеру и выбранного DynDNS сервера для настройки.  
 
-#### 1.1.3. Gray External IP
+#### 1.1.3. Серый IP
 
-This is the worst case. You will need to configure a **tunnel** to be able to access your home network from the Internet. As we will use **Cloudflare** later as a DNS service, I recommend using the Cloudflare tunnel. The instructions on how to set it up can be found at [this](https://developers.cloudflare.com/tunnel/) link. However, before configuring the tunnel, read the following parts about the domain name.  
+Это худший вариант. Вам будет необходимо настроить **тунель** для того, что бы иметь возможность подключиться к вашей домашней сети из Internet. Так как мы будем в дальнейшем использовать **Cloudflare** в качестве DNS сервера, я рекомендую использоват **Cloudflare тунель**. Инструкции по настройки туннеля могут быть найдены [здесь](https://developers.cloudflare.com/tunnel/). Одно, прежде чем переходить к настройкам тунеля, прочитайте следующие части про доменное имя.  
 
-### 1.2. Obtaining a Domain Name
+### 1.2. Получение доменного имени
 
-If you already own a domain name, you can skip this part. However, I recommend transferring your domain to Cloudflare because we will use it as a DNS proxy to protect our local home network from the external world.  
+Если вы уже владеете каким-либо доменным именем, то вы можете пропустить эту часть. Однако, я рекомендую перенести ваш домен на Cloudflare потому, что мы будем использовать CloudFlare как DNS прокси для защиты вашей домашней сети от внешнего мира.  
 
 If you do not own a domain name and you have a white static or gray external IP address, you will need to purchase one. There are a lot of services that offer domain names. I personally use Namecheap and Cloudflare. For this project, it is better if you purchase the domain name from Cloudflare, so you will not need to transfer it to Cloudflare later.  
 
