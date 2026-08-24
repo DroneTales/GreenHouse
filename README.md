@@ -149,39 +149,39 @@ Request timeout for icmp_seq 2
 
 значит что-то не так с настройками вашего DNS сервера или IP (может он **серый** или **за NAT**?).  
 
-## 2. Finding Temperature Sensor Addresses
+## 2. Определение адресов датчиков температуры
 
-We need to know the temperature sensor addresses now because we will use them in HomeBridge to identify the sensors. It is not necessary if you have just one, but if you have several, this is a very important step. For example, I have 4 sensors: 3 inside the greenhouse and 1 outside. Two of the three inside are located near the doors, and the third one is in the middle of the greenhouse. To be able to identify them, I need to know the address of each. Then I labeled them with colour labels. The firmware supports **up to 10** temperature sensors.  
+Теперь нам необходимо узнать адреса датчиков температуры, что бы мы могли их идетнифицировать в HomeBridge. Это не является необходимым, если у вас только один датчик, но если их несколько, то это очень важный шаг. Например у меня 4 датчика: 3 внутри теплицы и 1 снаружи. Два из тех, что внутри, расположены около дверей. И один - по центру теплицы. Для того, что бы знать, какой из них где, мне необходимо знать адрес каждого. Затем я помечу их цветными метками (например, термоусадкой). Прошивка поддерживает **вплоть дл 10** датчиков температуры.  
 
-### 2.1. Assembly the Device
+### 2.1. Сборка устройства
 
-Before we can continue, you should assemble the device. Use the schematic and the board view located in the *wiring* folder. After assembling, attach the GSM antenna and do not detach it. Turning on the device without the GSM antenna may damage the modem.  
+Прежде чем продожить мы должны собрать устройство. Используйте схему и вид платы из папки *wiring*. После сборки подлючите GSM антенну и не отключайте ее. Включение устройства без подключенной GSM антенны может вывести GSM модем из строя.  
 
-Actually, you can use any ESP32 to find the sensor addresses, but I assume you will use the same board as for the Greenhouse Controller. For details, refer to the comments in the **FindSensors** sketch.  
+При желании вы можете использовать любую плату на основе ESP32 для того, что бы определить адреса датчиков температуры, но я предположу, что вы будете использовать плату контроллера.  
 
-### 2.2. Using the FindSensors Sketch
+### 2.2. Использование скетча FindSensors
 
-Now open the **FindSensors** sketch in the Arduino IDE and flash it to the board. Once done, connect the first sensor and power up the board. Open the Arduino IDE Serial Monitor window. There you will see the address of your sensor. Write it down and mark the sensor somehow so that later you can tell which sensor has which address.  
+Теперь откройте скетч **FindSensors** в Arduino IDE и прошейте вашу плату. После этого подключите первый сенсор и подключите плату. Откройте Serial Monitor в Arduino IDE. Если все собрано верно, то вы увидите адрес подключенного сенсора. Запишите этот адрес и пометьте сенсор каким-либо способом.  
 
-How I did that: When a sensor address was found, I wrote it down and marked the sensor with a colour label. Finally, I got a list like the one below:  
+Как это делал я: когда адрес сенсора найдет, я записывал его и помечал сенсор цветной термоусадкой. В итоге я получил таблицу вроде такой:  
 
-9666714504207294760 - Black  
-18437195502557880616 - White  
-290801794589212200 - Red  
-16791709353807948072 - Green  
+9666714504207294760 - Черный  
+18437195502557880616 - Белый  
+290801794589212200 - Красный  
+16791709353807948072 - Зеленый  
 
-## 3. Configuring HomeBridge
+## 3. Настройка HomeBridge
 
-We have all the external things set up and they look like they are working well. We also have a list of our temperature sensor addresses. Now we must prepare HomeBridge to receive temperature data from our Greenhouse Controller. To do that, open your HomeBridge web interface, switch to the *Plugins* page, and find and install the **Homebridge MQTTThing** plugin. Do not worry, it is fully compatible with the latest version of HomeBridge.  
+Мы выполнили все необходимые приготовления и все выглядит работающим как надо. Так же у нас теперь есть список датчиков температуры. Теперь нам надо подготовить HomeBridge для получения данных с контроллера теплицы. Для этого откройте WEB интерфейс вашего HomeBridge, переключитесь на страницу *Plugins*, найдите и установите плагин **Homebridge MQTTThing**. Не беспокойтесь, он полностью совместим с последними версиями HomeBridge.  
 
-When the plugin is installed, go to the JSON Config page. Find the *"accessories"* section in the JSON configuration file. If there is no such section, add one at the very end of the configuration file, as shown below (do not forget to add a comma after the previous section's closing bracket):  
+После установки плагина перейдите на страницу JSON Config. Найдите раздел *"accessories"* в файле конфигурации. Если такой секйии там нет, то добавьте ее в самый конец конфигурационного файла (не забудьте добавить запятую после предыдущей секции):  
 
 ```
 "accessories": [
 ]
 ```  
 
-If the section already exists, add the following configuration right after the last accessory in the section (do not forget to add a comma after the closing bracket of the previous accessory). If you just created the section, add the configuration between the square brackets (I assume you have four temperature sensors and labeled them as in my example above. Change the configuration to suit your needs by removing some sections if you have fewer sensors or by adding new sections if you have more sensors).  
+Если такая секция уже есть, то добавьте следующую конигурацию сразу за последним аксессуаром в этой секции (не забудьте про запятую!). Если вы только что создали этот раздел, то добавьте конфигурации между фигурными скобками (Я предполагаю, что у вас 4 датчика. Измените конфигурацию под ваши нужды при необходимости).  
 
 ```
 {
@@ -306,15 +306,15 @@ If the section already exists, add the following configuration right after the l
 }
 ```
 
-I have provided such a long configuration example so that you can figure out how it works. Replace *mqtt_user_name* with your MQTT broker username and *mqtt_password* with your MQTT broker password. The *"name"* parameter is the default sensor name that appears in your Home app when you add the sensors. You can use any name you like, but I prefer to use neutral names and rename the sensors in the Home app later. Also, take a look at the *"serialNumber"* parameter. I build it as *sensorID_colour_first_six_digits_from_address*. This allows me to identify the sensor in the Home app and give it the correct name depending on the sensor's location. And the *"topic"* parameter must end with the sensor's sequential number (0, 1, 2, 3, etc.). I hope you got it.  
+Я привел такую длинную конфигурация для того, что бы вы могли понять, как это устроено. Замените *mqtt_user_name* на имя пользователя вашего MQTT брокера, а *mqtt_password* - на пароль. Параметр *"name"* - имя сенсора по-умолчанию, которое появится в приложении Home после добавления сенсоров. Вы можете использовать любое, но я предпочитаю использовать нейтральные имена и потом переименовать сенсоры в приложении Home. Обратите внимание на параметр *"serialNumber"*. Я формировал его по следующему алгоритму *ID_сенсора_цвет_первые_6_цифр_адреса_сенсора*. Это позволяет определить сенсор в приложении Home и дать ему осмысленное имя в зависимости от расположения сенсора. Параметр *"topic"* должен оканчиваться порядковым номером сенсораp (0, 1, 2, 3, etc.). Надеюсь, это понятно.  
 
-Now save the configuration and restart HomeBridge. If you did everything correctly, then after HomeBridge restarts, you should see the sensors in your Home app. You do not need to add all of them manually, because they are connected to the HomeBridge bridge, so they will appear automatically.  
+Сохраните конфигурацию и перезапустите HomeBridge. Если все сделано правильно, то после перезапуска HomeBridge вы увидите датчики температуры в приложении Home. Вам не нужно добавлять их вручную, они появятся автоматически.  
 
-## 4. Flashing the Controller Firmware
+## 4. Прошивка контроллера теплицы
 
-Open the *GreenHouse.ino* sketch and flash it to the board. Once completed, connect all the sensors. **Do not forget about the GSM antenna! Running the board without a connected antenna may damage the modem.** Connect the 18650 battery. Connect external power (if needed) to the USB-C port. Do not turn the board on yet.  
+Откройте скетч *GreenHouse.ino* и прошейте плату. После этого подключите все сенсоры. **Не забудьте про GSM антенну!** Подключите аккумулятор 18650. Подключите внешнее питание (если требуется) к порту USB-C. **Не включайте плату!**  
 
-### 4.1. Preparing SD-Card
+### 4.1. Подготовка SD-Card
 
 Now you need a micro SD card. The card is used to store the GSM, MQTT, and sensor configuration. Later, I will probably add logging to the card and other things I have in my plans. But currently, it is used to store the configuration file. So format the SD card as **FAT32** and copy the *config.txt* file to it. The file must be in the root of the card's file system.  
 
