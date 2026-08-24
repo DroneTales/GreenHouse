@@ -360,21 +360,21 @@ Address_3=16791709353807948072
 
 Здесь вы должны указать настройки вашего MQTT брокера (сервера). Параметр **Server** - доменное имя вашего MQTT сервера (в примере, приведенном выше,  используется *broker.greenhouse.home*). Параметр **Port** - номер порта MQTT брокера (в нашем примере это *5555*). Параметры **UserName** и **Password**  - это имя пользователя и пароль для доступа к MQTT брокеру. Параметр **ClientID** - уникальное имя клиента **unique** MQTT брокера. Вы можете оставить его как есть.  
 
-#### 4.2.4. The Sensors Section
+#### 4.2.4. Раздел Sensors
 
-In this section, you should provide your temperature sensor addresses. The **Count** parameter must be set to the total number of sensors used in your configuration. Then each **Address_n** must be set to the corresponding *sensor address*. The **N** must correspond to the MQTT message number (*greenhouse/sensors/0*, *greenhouse/sensors/1*, etc.) in the MQTT Things HomeBridge plugin configuration.  
+В этом разделе вы должны указать адреса своих датчиков температуры. В параметре **Count** нужно указать количество используемых датчиков. Затем, в каждом параметре **Address_n** должен быть указан *адрес датчика*. **N** соответствует номеру сообщения MQTT (*greenhouse/sensors/0*, *greenhouse/sensors/1*, и так далее) в конфигурации платина MQTT Things.  
 
-### 4.3. Testing the Hardware
+### 4.3. Проверка оборудования
 
-Everything is ready for the first test. Connect the sensors to the board if you have not done so yet, insert the SD card with the configuration file, insert a SIM card, and power up the board.  
+Все готово для первой проверки. Подключите датчики к плате контроллера, вставьте SD карту с файлом конфигурации, вставьте SIM карту и включите плату.  
 
-If everything is assembled correctly and the configuration file is valid, then in a few seconds you will see the red LEDs near the board's modem start flashing, indicating an attempt to send data. Once the LEDs turn off, wait a bit. If they start flashing again after about 2 minutes, then the data was not sent and there is something wrong with your mobile network or with your MQTT server configuration (domain, port forwarding, etc.). Check all these things. Try using MQTT Explorer (Windows) or something similar to connect to your MQTT broker by its domain name. Check the tunnel settings, if any, and check your DynDNS configuration.  
+Если все было собрано правильно и конфигруационный файл корректен, то через несколько секунд красный светодиод рядом с модемом начнет мигать, указывая на попытку отправить данные. Псоле отключения светодиода подождите немного. Если он начнет мигать опять через примерно 2 минуты, то данные не были переданы на сервер. В этом случае проверьте настройки вашего сервера, роутера, MQTT брокера и всего, что связано с локальной сетью и Internet.  
 
-If the LEDs start flashing a second time after about 15 minutes, then everything is working as expected and you should see the received MQTT messages from the temperature sensors in the HomeBridge log window. You should also see the temperature readings for those sensors in your Home app.  
+Если светодиод начнет повторно мигать через примерно 15 минут, то данные были успешно переданы и вы должны увидеть текущую температуру в приложении Home.  
 
-If the LEDs do not start flashing for a long time after the board is powered up, then there is something wrong with the configuration file or the SD card. Re-check the configuration file. Make sure the SD card was formatted as FAT32 and is readable.  
+Если светодиод не начинает мигать после включения спустя долгое время, то проблема с файлом конфигурацци. Выключите плату, извлеките SD карту и проверьте файл конфигурации  
 
-## 5. Temperature Logger
+## 5. Логгер температуры
 
 The project includes two applications: the **Temperature Logger** service and the **Temperature Monitor** web application. The applications are written in Python and JavaScript. They require **Python 3.11** and the **nginx** web server. In this section, you will find detailed instructions on how to set it all up. By [this](https://greenhouse.dronetales.net) link you can see how it works in real life.  
 
